@@ -1,0 +1,32 @@
+#IDE
+.vscode
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+#OS
+.DS_Store
+
+# compiled output
+node_modules
+dist
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+#front-end
+front-end/build
+.svelte-kit
+front-end/package
+front-end/.env
+front-end/.env.*
+front-end/!.env.example
+front-end/vite.config.js.timestamp-*
+front-end/vite.config.ts.timestamp-*
