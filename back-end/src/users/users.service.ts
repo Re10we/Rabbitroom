@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   getAuth,
+  AuthCredential,
+  EmailAuthCredential,
 } from 'firebase/auth';
 
 @Injectable()
@@ -22,5 +24,13 @@ export class UsersService {
     const resultSignIn = signInWithEmailAndPassword(auth, email, password);
 
     return resultSignIn;
+  }
+
+  SignOut() {
+    const auth = getAuth();
+
+    //const result = signOut(auth);
+
+    return auth;
   }
 }
