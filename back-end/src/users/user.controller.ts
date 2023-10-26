@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Delete, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/createUser.dto';
 import { User } from './schemas/user.schema';
@@ -26,6 +26,13 @@ export class UserController {
   deleteAll() {
     return this.usersService.deleteAll();
   }
+
+  /* TODO move to users  
+  @Post('change/:access_token')
+  changeNameUser(@Param('access_token') access_token: string) {
+    return this.usersService.changeName(access_token);
+  }
+  */
 
   @Get('all')
   findAll(): Promise<User[]> {
