@@ -1,9 +1,12 @@
-import { Controller, Post, Get, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Delete,Request, UseGuards  } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/createUser.dto';
 import { User } from './schemas/user.schema';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from './guard/auth.guard';
 
 @Controller('users')
+@ApiTags('users-controller')
 export class UserController {
   constructor(private readonly usersService: UserService) {}
 
@@ -27,12 +30,15 @@ export class UserController {
     return this.usersService.deleteAll();
   }
 
-  /* TODO move to users  
-  @Post('change/:access_token')
-  changeNameUser(@Param('access_token') access_token: string) {
-    return this.usersService.changeName(access_token);
+  /* TODO move to users */   
+  @Post('change')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  changeNameUser(@Request() req) {
+    return req.user;
   }
-  */
+  
+  
 
   @Get('all')
   findAll(): Promise<User[]> {

@@ -39,21 +39,7 @@ export class UserService {
 
     return { error: 'error SignIn' };
   }
-  /* TODO MidlWare
-  async changeName(access_token: string) {
-    console.log(access_token);
-    try {
-      const { username } = this.jwtService.verify(access_token);
-
-      const foundUser = await this.userModel.findOne({ name: username });
-
-      return await foundUser.updateOne({ name: 'glek' });
-    } catch (ExceptionsHandler) {
-      console.log('ERROR [ExceptionsHandler] invalid signature');
-    }
-  }
-  */
-
+ 
   async deleteUser(dto: UserDto): Promise<User> {
     return await this.userModel.findOneAndRemove(
       dto.email ? { email: dto.email } : { name: dto.name },
@@ -61,10 +47,7 @@ export class UserService {
   }
 
   async deleteAll() {
-    const currentCountDocuments = await this.userModel.countDocuments();
-    for (let docCount = 0; docCount < currentCountDocuments; docCount++) {
-      await this.userModel.findOneAndDelete();
-    }
+    await this.userModel.deleteMany({});
   }
 
   async findAll(): Promise<User[]> {
