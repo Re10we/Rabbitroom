@@ -1,45 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { UserDto } from './dto/createUser.dto';
-import { User } from './schemas/user.schema';
+import { User } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
+import { ExceptionDto } from 'src/dto/exception.dto';
 
 @Injectable()
-export class UserService {
+export class AuthService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async create(dto: UserDto): Promise<object | User> {
+  async create(dto: UserDto): Promise<ExceptionDto | User> {
     const candidate = await this.userModel.findOne({ email: dto?.email });
-    //TODO structure for exception-
+
     if (candidate) {
-      return { value: 'Candidate is null' };
+      return { code: 200, description: 'this email is storage' };
     }
 
-    const createdUser = await this.userModel.create(dto);
-
-    return createdUser;
+    //adding new user to db
+    return await this.userModel.create(dto);
   }
 
-  async signIn(dto: UserDto) {
+  async signIn(dto: UserDto): Promise<ExceptionDto | string> {
     const foundUser = await this.userModel.findOne(
       dto.email ? { email: dto.email } : { name: dto.name },
     );
+
     if (foundUser?.password === dto.password) {
       const payload = { idUser: foundUser._id, username: foundUser.name };
 
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
+      return await this.jwtService.signAsync(payload);
+    } else {
+      return { code: 200, description: 'password uncorrected' };
     }
-
-    return { error: 'error SignIn' };
   }
- 
+
   async deleteUser(dto: UserDto): Promise<User> {
     return await this.userModel.findOneAndRemove(
       dto.email ? { email: dto.email } : { name: dto.name },
@@ -48,9 +47,5 @@ export class UserService {
 
   async deleteAll() {
     await this.userModel.deleteMany({});
-  }
-
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
   }
 }
