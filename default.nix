@@ -7,6 +7,7 @@ with import <nixpkgs> {};
       buildInputs = [
        nodejs
        nodePackages.typescript-language-server
+       mongodb-compass
       ];
       
    }

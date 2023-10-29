@@ -5,6 +5,26 @@
     LockSolid,
     UserCircleSolid,
   } from "flowbite-svelte-icons";
+
+  let name = 'temp1';
+  let email='temp1';
+  let password = 'temp1';
+
+  async function registrationClick() {
+  const res = await fetch('http://localhost:3000/auth/create',
+   {
+      mode: 'no-cors',
+			method: 'POST',
+			body: JSON.stringify({
+				name,
+        email,
+        password
+			})
+		});
+	
+		const json = await res.json();
+    console.log(json);
+  }
 </script>
 
 <main class="flex flex-col items-center justify-center min-h-screen">
@@ -42,7 +62,7 @@
     </Input>
   </div>
   <div>
-    <Button href="/">Sign up</Button>
+    <Button on:click={registrationClick} href="/">Sign up</Button>
   </div>
 </main>
 
