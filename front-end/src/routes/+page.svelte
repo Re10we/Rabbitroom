@@ -1,10 +1,7 @@
 <script>
-   
-  </script>
-  
-  <a href="/login_form">login_form</a>
+</script>
 
+<a href="/auth/login_form">login_form</a>
 
 <style>
-
 </style>

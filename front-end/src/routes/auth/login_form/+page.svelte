@@ -24,7 +24,7 @@
   <div>
     <Button href="/">Sign in</Button>
     <Button
-      href="/registr_form"
+      href="/auth/registr_form"
       class="bg-transparent hover:bg-transparent text-black">Sign up</Button
     >
   </div>
