@@ -33,14 +33,14 @@ export class AuthController {
   @ApiBearerAuth('bearerAuth')
   refreshToken(@Request() req) {}
 
-  @Get('validEmail/:email')
+  @Get('isStorageEmail/:email')
   validationEmail(@Param('email') email: string): Promise<boolean> {
-    return this.authService.validationEmail(email);
+    return this.authService.isStorageEmail(email);
   }
 
-  @Get('validUserName/:name')
+  @Get('isStorageUserName/:name')
   validationUserName(@Param('name') name: string): Promise<boolean> {
-    return this.authService.validationUserName(name);
+    return this.authService.isStorageUserName(name);
   }
 
   @Delete('delete')

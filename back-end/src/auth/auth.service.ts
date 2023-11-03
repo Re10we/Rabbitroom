@@ -39,11 +39,11 @@ export class AuthService {
     }
   }
 
-  async validationEmail(email: string): Promise<boolean> {
+  async isStorageEmail(email: string): Promise<boolean> {
     return (await this.userModel.findOne({ email: email })) != null;
   }
 
-  async validationUserName(name: string): Promise<boolean> {
+  async isStorageUserName(name: string): Promise<boolean> {
     return (await this.userModel.findOne({ name: name })) != null;
   }
 

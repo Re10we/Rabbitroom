@@ -45,8 +45,8 @@
 
       succesfullyFilling = false;
     } else {
-      field.color_helper_box = "green";
-      field.color_input_box = "green";
+      field.color_helper_box = "disabled";
+      field.color_input_box = "base";
       field.text_helper_box = "";
     }
 
@@ -56,32 +56,45 @@
   const validationRegUser = async (candidate: AuthUser): Promise<boolean> => {
     let succesfullyValidate = true;
 
-    if ((await candidate.validUserName()) == true) {
+    if (candidate.isValidUserName() == false) {
       name.color_helper_box = "red";
       name.color_input_box = "red";
-      name.text_helper_box = "this name is storage";
+      name.text_helper_box = "this name is incorrect";
 
       succesfullyValidate = false;
     } else {
-      name.color_helper_box = "green";
-      name.color_input_box = "green";
-      name.text_helper_box = "";
+      if ((await candidate.isStorageUserName()) == true) {
+        name.color_helper_box = "green";
+        name.color_input_box = "green";
+        name.text_helper_box = "";
+      } else {
+        //TODO validation for user name
+        name.color_helper_box = "red";
+        name.color_input_box = "red";
+        name.text_helper_box = "this name is storage";
+      }
     }
 
-    if ((await candidate.validEmail()) == true) {
+    if (candidate.isValidEmail() == false) {
       email.color_helper_box = "red";
       email.color_input_box = "red";
-      email.text_helper_box = "this email is storage";
+      email.text_helper_box = "this email is incorrect";
 
       succesfullyValidate = false;
     } else {
-      email.color_helper_box = "green";
-      email.color_input_box = "green";
-      email.text_helper_box = "";
+      if ((await candidate.isStorageEmail()) == true) {
+        email.color_helper_box = "green";
+        email.color_input_box = "green";
+        email.text_helper_box = "";
+      } else {
+        email.color_helper_box = "red";
+        email.color_input_box = "red";
+        email.text_helper_box = "this email is storage";
+      }
     }
 
     //========================================TODO validate password========================================
-    if (candidate.validPassword() == false) {
+    if (candidate.isValidPassword() == false) {
       password.color_helper_box = "red";
       password.color_input_box = "red";
       //TODO
@@ -111,6 +124,8 @@
   };
 
   const registrationClick = async () => {
+    const user = { name: name.value, email: email.value, password: password.value };
+
     const isSuccessfullyField =
       Number(isFillField(name)) &
       Number(isFillField(email)) &
@@ -124,18 +139,14 @@
       password = password;
       confirm_password = confirm_password;
       //============================================*****************============================================
-
-      return;
     }
-
-    const user = { name: name.value, email: email.value, password: password.value };
 
     const authUser = new AuthUser(user);
     if ((await validationRegUser(authUser)) == false) {
       return;
     }
 
-    //await authUser.regUser();
+    await authUser.regUser();
   };
 </script>
 

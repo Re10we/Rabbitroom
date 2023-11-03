@@ -23,15 +23,27 @@ export class AuthUser {
     return { data, status };
   }
 
-  async validEmail(): Promise<boolean> {
+  async isStorageEmail(): Promise<boolean> {
     return (await axios.get(`http://localhost:3000/auth/validEmail/${this.user.email}`)).data;
   }
 
-  async validUserName(): Promise<boolean> {
+  async isStorageUserName(): Promise<boolean> {
     return (await axios.get(`http://localhost:3000/auth/validUserName/${this.user.name}`)).data;
   }
 
-  validPassword(): boolean {
+  isValidEmail(): boolean {
+    const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+    const result: boolean = expression.test(this.user.email);
+    console.log(this.user.email);
+    return result;
+  }
+
+  isValidUserName(): boolean {
+    //TODO validation for user name
+    return true;
+  }
+  isValidPassword(): boolean {
     //TODO validation password user
     return true;
   }
