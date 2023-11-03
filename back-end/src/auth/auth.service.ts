@@ -39,6 +39,14 @@ export class AuthService {
     }
   }
 
+  async validationEmail(email: string): Promise<boolean> {
+    return (await this.userModel.findOne({ email: email })) != null;
+  }
+
+  async validationUserName(name: string): Promise<boolean> {
+    return (await this.userModel.findOne({ name: name })) != null;
+  }
+
   async deleteUser(dto: UserDto): Promise<User> {
     return await this.userModel.findOneAndRemove(
       dto.email ? { email: dto.email } : { name: dto.name },

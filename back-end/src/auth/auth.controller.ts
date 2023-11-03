@@ -6,6 +6,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/createUser.dto';
@@ -31,6 +32,16 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')
   refreshToken(@Request() req) {}
+
+  @Get('validEmail/:email')
+  validationEmail(@Param('email') email: string): Promise<boolean> {
+    return this.authService.validationEmail(email);
+  }
+
+  @Get('validUserName/:name')
+  validationUserName(@Param('name') name: string): Promise<boolean> {
+    return this.authService.validationUserName(name);
+  }
 
   @Delete('delete')
   deleteUser(@Body() dto: UserDto) {
