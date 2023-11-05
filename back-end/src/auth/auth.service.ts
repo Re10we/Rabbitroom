@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { UserDto } from './dto/createUser.dto';
 import { User } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ExceptionDto } from 'src/dto/exception.dto';
+import { jwtAccessToken, jwtRefreshToken } from 'src/user/guard/constants';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(dto: UserDto): Promise<ExceptionDto | User> {
+  async signUp(dto: UserDto): Promise<ExceptionDto | User> {
     const candidate = await this.userModel.findOne({ email: dto?.email });
 
     if (candidate) {
@@ -25,17 +26,33 @@ export class AuthService {
     return await this.userModel.create(dto);
   }
 
-  async signIn(dto: UserDto): Promise<ExceptionDto | string> {
+  async signIn(
+    dto: UserDto,
+  ): Promise<{ access_token: string; refresh_token: string }> {
     const foundUser = await this.userModel.findOne(
       dto.email ? { email: dto.email } : { name: dto.name },
     );
+    if (foundUser == null) {
+      throw new UnauthorizedException();
+    }
 
-    if (foundUser?.password === dto.password) {
+    if (foundUser.password === dto.password) {
       const payload = { idUser: foundUser._id, username: foundUser.name };
+      const accessToken = await this.jwtService.signAsync(payload, {
+        secret: jwtAccessToken.secret,
+        expiresIn: '3d',
+      });
 
-      return await this.jwtService.signAsync(payload);
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        secret: jwtRefreshToken.secret,
+        expiresIn: '15d',
+      });
+      return {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      };
     } else {
-      return { code: 200, description: 'password uncorrected' };
+      throw new UnauthorizedException();
     }
   }
 

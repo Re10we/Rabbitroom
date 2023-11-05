@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 
-type User = {
+export type User = {
   name: string;
   email: string;
   password: string;
@@ -11,31 +11,31 @@ export class AuthUser {
     this.user = user;
   }
 
-  async regUser() {
-    const { data, status } = await axios.post<User>("http://localhost:3000/auth/create", this.user);
+  async signUpUser(): Promise<AxiosResponse<User, any>> {
+    const response = await axios.post<User>("http://localhost:3000/auth/signUp", this.user);
 
-    return { data, status };
+    return response;
   }
 
-  async signInUser() {
-    const { data, status } = await axios.post<User>("http://localhost:3000/auth/signIn", this.user);
+  async signInUser(): Promise<AxiosResponse<string, any>> {
+    const response = await axios.post<string>("http://localhost:3000/auth/signIn", this.user);
 
-    return { data, status };
+    return response;
   }
 
   async isStorageEmail(): Promise<boolean> {
-    return (await axios.get(`http://localhost:3000/auth/validEmail/${this.user.email}`)).data;
+    return (await axios.get(`http://localhost:3000/auth/isStorageEmail/${this.user.email}`)).data;
   }
 
   async isStorageUserName(): Promise<boolean> {
-    return (await axios.get(`http://localhost:3000/auth/validUserName/${this.user.name}`)).data;
+    return (await axios.get(`http://localhost:3000/auth/isStorageUserName/${this.user.name}`)).data;
   }
 
   isValidEmail(): boolean {
     const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
     const result: boolean = expression.test(this.user.email);
-    console.log(this.user.email);
+
     return result;
   }
 

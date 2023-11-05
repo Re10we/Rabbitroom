@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Label, Input, Button, Helper } from "flowbite-svelte";
   import { EnvelopeSolid, LockSolid, UserCircleSolid } from "flowbite-svelte-icons";
-  import { AuthUser } from "../authUser";
+  import { AuthUser, type User } from "../authUser";
+  import type { AxiosResponse } from "axios";
 
   type Field = {
     value: string;
@@ -35,89 +36,103 @@
     text_helper_box: "",
   };
 
-  const isFillField = (field: Field): boolean => {
-    let succesfullyFilling = true;
-
-    if (field.value == "") {
-      field.color_helper_box = "red";
-      field.color_input_box = "red";
-      field.text_helper_box = "This field must be filled";
-
-      succesfullyFilling = false;
-    } else {
-      field.color_helper_box = "disabled";
-      field.color_input_box = "base";
-      field.text_helper_box = "";
-    }
-
-    return succesfullyFilling;
-  };
-
   const validationRegUser = async (candidate: AuthUser): Promise<boolean> => {
     let succesfullyValidate = true;
 
-    if (candidate.isValidUserName() == false) {
-      name.color_helper_box = "red";
-      name.color_input_box = "red";
-      name.text_helper_box = "this name is incorrect";
-
-      succesfullyValidate = false;
-    } else {
-      if ((await candidate.isStorageUserName()) == true) {
-        name.color_helper_box = "green";
-        name.color_input_box = "green";
-        name.text_helper_box = "";
-      } else {
-        //TODO validation for user name
+    if (candidate.getUserName() != "") {
+      if (candidate.isValidUserName() == false) {
         name.color_helper_box = "red";
         name.color_input_box = "red";
-        name.text_helper_box = "this name is storage";
-      }
-    }
+        name.text_helper_box = "this name is incorrect";
 
-    if (candidate.isValidEmail() == false) {
-      email.color_helper_box = "red";
-      email.color_input_box = "red";
-      email.text_helper_box = "this email is incorrect";
+        succesfullyValidate = false;
+      } else {
+        if ((await candidate.isStorageUserName()) == false) {
+          name.color_helper_box = "green";
+          name.color_input_box = "green";
+          name.text_helper_box = "";
+        } else {
+          //TODO validation for user name
+          name.color_helper_box = "red";
+          name.color_input_box = "red";
+          name.text_helper_box = "this name is storage";
+        }
+      }
+    } else {
+      name.color_helper_box = "red";
+      name.color_input_box = "red";
+      name.text_helper_box = "This field must be filled";
 
       succesfullyValidate = false;
-    } else {
-      if ((await candidate.isStorageEmail()) == true) {
-        email.color_helper_box = "green";
-        email.color_input_box = "green";
-        email.text_helper_box = "";
-      } else {
+    }
+
+    if (candidate.getUserEmail() != "") {
+      if (candidate.isValidEmail() == false) {
         email.color_helper_box = "red";
         email.color_input_box = "red";
-        email.text_helper_box = "this email is storage";
+        email.text_helper_box = "this email is incorrect";
+
+        succesfullyValidate = false;
+      } else {
+        if ((await candidate.isStorageEmail()) == false) {
+          email.color_helper_box = "green";
+          email.color_input_box = "green";
+          email.text_helper_box = "";
+        } else {
+          email.color_helper_box = "red";
+          email.color_input_box = "red";
+          email.text_helper_box = "this email is storage";
+        }
       }
+    } else {
+      email.color_helper_box = "red";
+      email.color_input_box = "red";
+      email.text_helper_box = "This field must be filled";
+
+      succesfullyValidate = false;
     }
 
     //========================================TODO validate password========================================
-    if (candidate.isValidPassword() == false) {
+    if (candidate.getUserPassword() != "") {
+      if (candidate.isValidPassword() == false) {
+        password.color_helper_box = "red";
+        password.color_input_box = "red";
+        //TODO
+        password.text_helper_box = "password is not corrected, please add this symbol:...";
+
+        succesfullyValidate = false;
+      } else {
+        password.color_helper_box = "green";
+        password.color_input_box = "green";
+        password.text_helper_box = "";
+      }
+    } else {
       password.color_helper_box = "red";
       password.color_input_box = "red";
-      //TODO
-      password.text_helper_box = "password is not corrected, please add this symbol:...";
+      password.text_helper_box = "This field must be filled";
 
       succesfullyValidate = false;
-    } else {
-      password.color_helper_box = "green";
-      password.color_input_box = "green";
-      password.text_helper_box = "";
     }
     //========================================***********************========================================
 
-    if (candidate.getUserPassword() != confirm_password.value) {
+    if (confirm_password.value != "") {
+      if (candidate.getUserPassword() != confirm_password.value) {
+        confirm_password.color_helper_box = "red";
+        confirm_password.color_input_box = "red";
+        confirm_password.text_helper_box = "Passwords do not match";
+
+        succesfullyValidate = false;
+      } else {
+        confirm_password.color_helper_box = "green";
+        confirm_password.color_input_box = "green";
+        confirm_password.text_helper_box = "";
+      }
+    } else {
       confirm_password.color_helper_box = "red";
       confirm_password.color_input_box = "red";
-      confirm_password.text_helper_box = "Password do not match";
+      confirm_password.text_helper_box = "This field must be filled";
 
       succesfullyValidate = false;
-    } else {
-      confirm_password.color_helper_box = "green";
-      confirm_password.color_input_box = "green";
-      confirm_password.text_helper_box = "";
     }
 
     return succesfullyValidate;
@@ -126,27 +141,12 @@
   const registrationClick = async () => {
     const user = { name: name.value, email: email.value, password: password.value };
 
-    const isSuccessfullyField =
-      Number(isFillField(name)) &
-      Number(isFillField(email)) &
-      Number(isFillField(password)) &
-      Number(isFillField(confirm_password));
-
-    if (!isSuccessfullyField) {
-      //============================================update components============================================
-      name = name;
-      email = email;
-      password = password;
-      confirm_password = confirm_password;
-      //============================================*****************============================================
-    }
-
     const authUser = new AuthUser(user);
     if ((await validationRegUser(authUser)) == false) {
       return;
     }
 
-    await authUser.regUser();
+    await authUser.signUpUser();
   };
 </script>
 

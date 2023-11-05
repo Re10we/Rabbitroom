@@ -5,9 +5,12 @@ import {
   Body,
   Delete,
   UseGuards,
-  Request,
   Param,
+  UnauthorizedException,
+  Res,
+  Req,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/createUser.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -18,20 +21,32 @@ import { AuthGuard } from '../user/guard/auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('create')
-  createUser(@Body() dto: UserDto) {
-    return this.authService.create(dto);
+  @Post('singUp')
+  signUpUser(@Body() dto: UserDto) {
+    return this.authService.signUp(dto);
   }
 
   @Post('signIn')
-  signInUser(@Body() dto: UserDto) {
-    return this.authService.signIn(dto);
+  async signInUser(
+    @Body() dto: UserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<string> {
+    const { access_token, refresh_token } = await this.authService.signIn(dto);
+
+    response.cookie('refreshToken', refresh_token, {
+      secure: true, // Set to true if using HTTPS
+      httpOnly: true,
+      sameSite: 'strict', // Adjust to your requirements
+      maxAge: 15 * 24 * 60 * 60 * 1000, // Set the expiration time(15d)
+    });
+
+    return access_token;
   }
 
   @Get('refresh')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')
-  refreshToken(@Request() req) {}
+  refreshToken(@Req() req: Request) {}
 
   @Get('isStorageEmail/:email')
   validationEmail(@Param('email') email: string): Promise<boolean> {
