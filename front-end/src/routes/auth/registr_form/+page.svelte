@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Label, Input, Button, Helper } from "flowbite-svelte";
   import { EnvelopeSolid, LockSolid, UserCircleSolid } from "flowbite-svelte-icons";
-  import { AuthUser, type User } from "../authUser";
-  import type { AxiosResponse } from "axios";
+  import { AuthUser, type User } from "../../../lib/authUser";
+  import { redirect } from "@sveltejs/kit";
+  import { goto } from "$app/navigation";
 
   type Field = {
     value: string;
@@ -147,6 +148,8 @@
     }
 
     await authUser.signUpUser();
+
+    window.location.href = "/auth/login_form";
   };
 </script>
 

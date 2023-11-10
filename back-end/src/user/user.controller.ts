@@ -26,7 +26,25 @@ export class UserController {
   @ApiBearerAuth('bearerAuth')
   changeNameUser(@Request() req, @Param('newName') newName: string) {
     //TODO change username
-    const { username } = req.user;
     return req.user;
+  }
+
+  @Get('userName')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  getUserName(@Request() req) {
+    //TODO change username
+    const { username } = req.user;
+    return username;
+  }
+
+  @Get('userEmail')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  getUserEmail(@Request() req) {
+    //TODO change username
+    const { username } = req.user;
+    const email = this.userService.getUserEmail(username);
+    return email;
   }
 }

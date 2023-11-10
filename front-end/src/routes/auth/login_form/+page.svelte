@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Label, Input, Button, Helper } from "flowbite-svelte";
   import { EnvelopeSolid, LockSolid } from "flowbite-svelte-icons";
-  import { AuthUser, type User } from "../authUser";
+  import { AuthUser, type User } from "../../../lib/authUser";
   import { AxiosError, type AxiosResponse } from "axios";
+  import { goto } from "$app/navigation";
 
   type Field = {
     value: string;
@@ -69,6 +70,8 @@
       const access_token = response.data;
 
       localStorage.setItem("access_token", access_token); //save access_token in local storage
+
+      window.location.href = "/";
     } catch (error: any) {
       switch (error.constructor) {
         case AxiosError: {

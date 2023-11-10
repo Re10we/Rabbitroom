@@ -15,4 +15,13 @@ export class UserService {
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
   }
+
+  async getUserEmail(userName: string) {
+    const user = await this.userModel.findOne({ name: userName });
+    if (user) {
+      return user.email;
+    }
+
+    return null;
+  }
 }
