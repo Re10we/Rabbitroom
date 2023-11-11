@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { User } from "$lib/user";
   import "../app.postcss";
   import {
@@ -39,8 +38,10 @@
 
   onMount(async () => {
     if (User.getInstance().isLogginIn() == true) {
-      const user = User.getInstance();
       loggedIn = true;
+
+      const user = User.getInstance();
+
       userName = await user.getUserName();
       userEmail = await user.getUserEmail();
     }
@@ -95,7 +96,12 @@
   <Sidebar asideClass="bg-transparent">
     <SidebarWrapper>
       <SidebarGroup>
-        <SidebarItem label="Home">
+        <SidebarItem
+          on:click={() => {
+            window.location.href = "/";
+          }}
+          label="Home"
+        >
           <svelte:fragment slot="icon">
             <HomeSolid
               class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"

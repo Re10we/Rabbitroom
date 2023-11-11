@@ -17,7 +17,7 @@
 <main>
   <div class="relative h-screen">
     <div class="absolute top-[50%] left-[50%] -ml-28 -mt-28">
-      <Button>Sign in course</Button>
+      <Button href="/course">Sign in course</Button>
       <Button>Create course</Button>
     </div>
   </div>

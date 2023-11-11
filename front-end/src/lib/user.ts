@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestConfig } from "axios";
+import axios from "axios";
 
 /**
  * The User class defines the `getInstance` method that lets clients access
