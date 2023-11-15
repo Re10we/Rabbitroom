@@ -188,6 +188,7 @@
       bind:value={password.value}
       id="password"
       type="password"
+      placeholder="•••••"
       color={password.color_input_box}
     >
       <LockSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -201,6 +202,7 @@
       bind:value={confirm_password.value}
       id="password"
       type="password"
+      placeholder="•••••"
       color={confirm_password.color_input_box}
     >
       <LockSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />

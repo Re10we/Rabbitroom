@@ -9,7 +9,6 @@ export class User {
 
   private constructor() {}
 
-  //TODO adding new parametres for user
   /**
    * The static method that controls the access to the singleton instance.
    *
@@ -32,6 +31,18 @@ export class User {
     localStorage.removeItem("access_token");
   }
 
+  async createCourse(nameCourse: string): Promise<string | null> {
+    if (this.isLogginIn() == true) {
+      const response = axios.post(`http://localhost:3000/course/create/${nameCourse}`, {
+        headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
+      });
+
+      return (await response).data;
+    }
+
+    return null;
+  }
+
   getAccessTokken(): string | null {
     return localStorage.getItem("access_token");
   }
@@ -51,6 +62,18 @@ export class User {
   async getUserEmail() {
     if (this.isLogginIn() == true) {
       const response = axios.get("http://localhost:3000/user/userEmail", {
+        headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
+      });
+
+      return (await response).data;
+    }
+
+    return null;
+  }
+
+  async getUserCourses() {
+    if (this.isLogginIn() == true) {
+      const response = axios.get("http://localhost:3000/course/getCourses", {
         headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
       });
 

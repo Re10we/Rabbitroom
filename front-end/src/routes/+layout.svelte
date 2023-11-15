@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { User } from "$lib/user";
   import "../app.postcss";
   import {
@@ -20,9 +21,12 @@
     BarsSolid,
     CalendarMonthSolid,
     ArchiveSolid,
+    CirclePlusOutline,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
   import { sineIn } from "svelte/easing";
+  import JoinCourse from "./course/JoinCourse.svelte";
+  import CreateCourse from "./course/CreateCourse.svelte";
 
   let hiddenValue = true;
 
@@ -49,6 +53,7 @@
 
   const signOut = () => {
     User.getInstance().logOut();
+
     window.location.reload();
   };
 </script>
@@ -71,8 +76,17 @@
     </div>
   </div>
   {#if loggedIn == true}
-    <div>
-      <Avatar id="user-drop" class="w-22 h-10 mr-12 cursor-pointer" src="/yaiko_paravoz.png" />
+    <div class="flex mr-8">
+      {#if $page.url.pathname == "/"}
+        <div>
+          <CirclePlusOutline class="w-10 h-10 mr-4" />
+          <Dropdown>
+            <DropdownItem><JoinCourse loggedInUser={loggedIn} /></DropdownItem>
+            <DropdownItem><CreateCourse loggedInUser={loggedIn} /></DropdownItem>
+          </Dropdown>
+        </div>
+      {/if}
+      <Avatar id="user-drop" class="w-22 h-10  cursor-pointer" src="/yaiko_paravoz.png" />
       <Dropdown triggeredBy="#user-drop">
         <DropdownHeader>
           <span class="block text-sm">{userName}</span>
@@ -85,7 +99,7 @@
       </Dropdown>
     </div>
   {:else}
-    <div>
+    <div class="mr-[0.4rem]">
       <Button class="w-22 h-10" href="/auth/login_form">Sign In</Button>
       <Button class="w-22 h-10" href="/auth/registr_form">Sign Up</Button>
     </div>
