@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../../app.postcss";
   import { AccordionItem, Accordion } from "flowbite-svelte";
-  import { ClipboardListSolid, CogOutline } from "flowbite-svelte-icons";
+  import { ClipboardListSolid } from "flowbite-svelte-icons";
 
   let nameCourse = "Yaiko & Paravoz";
 </script>

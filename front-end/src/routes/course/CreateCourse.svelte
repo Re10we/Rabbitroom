@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { User } from "$lib/user";
   import { Button, Input, Label, Modal } from "flowbite-svelte";
 
@@ -15,6 +16,7 @@
 
       if (codeCourse != null) {
         window.location.reload();
+
         console.log("Create course!");
       }
     }
@@ -26,7 +28,7 @@
 <span
   on:click={() => {
     if (!loggedInUser) {
-      window.location.href = "/auth/login_form";
+      goto("/auth/login_form");
     } else {
       createCourse = true;
     }

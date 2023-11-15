@@ -97,7 +97,7 @@
   };
 </script>
 
-<main class="flex flex-col items-center justify-center min-h-screen">
+<main class="flex flex-col items-center justify-center h-[55rem]">
   <div class="mb-6">
     <Label for="input-group-1" class="block mb-2">Email</Label>
     <Input

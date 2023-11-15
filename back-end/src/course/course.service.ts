@@ -57,6 +57,26 @@ export class CourseService {
     }
   }
 
+  async joinCourse(userName: string, codeCourse: string): Promise<boolean> {
+    const candidate = this.userModel.findOne({ name: userName });
+    if (candidate == null) {
+      return false;
+    }
+
+    const course = this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return false;
+    }
+
+    const isSuccessfullyAdd = await this.addUserToCourse(
+      userName,
+      roleUser.student,
+      codeCourse,
+    );
+
+    return isSuccessfullyAdd;
+  }
+
   async createTask(taskDto: TaskDto) {
     await this.questModel.create();
   }

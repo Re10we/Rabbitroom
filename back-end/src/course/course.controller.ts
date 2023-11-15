@@ -25,6 +25,15 @@ export class CourseController {
     return this.courseService.createCourse(username, nameCourse);
   }
 
+  @Post('join/:codeCourse')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  joinCourse(@Request() req, @Param('codeCourse') codeCourse: string) {
+    const { username } = req.user;
+
+    return this.courseService.joinCourse(username, codeCourse);
+  }
+
   @Get('getCourses')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')

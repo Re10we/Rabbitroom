@@ -75,34 +75,37 @@
       <span class="text-2xl">RabbitRoom</span>
     </div>
   </div>
-  {#if loggedIn == true}
-    <div class="flex mr-8">
-      {#if $page.url.pathname == "/"}
-        <div>
-          <CirclePlusOutline class="w-10 h-10 mr-4" />
-          <Dropdown>
-            <DropdownItem><JoinCourse loggedInUser={loggedIn} /></DropdownItem>
-            <DropdownItem><CreateCourse loggedInUser={loggedIn} /></DropdownItem>
-          </Dropdown>
-        </div>
-      {/if}
-      <Avatar id="user-drop" class="w-22 h-10  cursor-pointer" src="/yaiko_paravoz.png" />
-      <Dropdown triggeredBy="#user-drop">
-        <DropdownHeader>
-          <span class="block text-sm">{userName}</span>
-          <span class="block truncate text-sm font-medium">{userEmail}</span>
-        </DropdownHeader>
 
-        <DropdownItem>Settings</DropdownItem>
-        <DropdownDivider />
-        <DropdownItem on:click={signOut}>Sign out</DropdownItem>
-      </Dropdown>
-    </div>
-  {:else}
-    <div class="mr-[0.4rem]">
-      <Button class="w-22 h-10" href="/auth/login_form">Sign In</Button>
-      <Button class="w-22 h-10" href="/auth/registr_form">Sign Up</Button>
-    </div>
+  {#if $page.url.pathname != "/auth/login_form" && $page.url.pathname != "/auth/registr_form"}
+    {#if loggedIn == true}
+      <div class="flex mr-8">
+        {#if $page.url.pathname == "/"}
+          <div>
+            <CirclePlusOutline class="w-10 h-10 mr-4" />
+            <Dropdown>
+              <DropdownItem><JoinCourse loggedInUser={loggedIn} /></DropdownItem>
+              <DropdownItem><CreateCourse loggedInUser={loggedIn} /></DropdownItem>
+            </Dropdown>
+          </div>
+        {/if}
+        <Avatar id="user-drop" class="w-22 h-10  cursor-pointer" src="/yaiko_paravoz.png" />
+        <Dropdown triggeredBy="#user-drop">
+          <DropdownHeader>
+            <span class="block text-sm">{userName}</span>
+            <span class="block truncate text-sm font-medium">{userEmail}</span>
+          </DropdownHeader>
+
+          <DropdownItem>Settings</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem on:click={signOut}>Sign out</DropdownItem>
+        </Dropdown>
+      </div>
+    {:else}
+      <div class="mr-[0.4rem]">
+        <Button class="w-22 h-10" href="/auth/login_form">Sign In</Button>
+        <Button class="w-22 h-10" href="/auth/registr_form">Sign Up</Button>
+      </div>
+    {/if}
   {/if}
 </div>
 
