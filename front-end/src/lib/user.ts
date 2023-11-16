@@ -6,6 +6,7 @@ import axios from "axios";
  */
 export class User {
   private static instance: User;
+  private currentCourse: string | undefined;
 
   private constructor() {}
 
@@ -24,7 +25,7 @@ export class User {
   }
 
   isLogginIn(): boolean {
-    return localStorage.getItem("access_token") != null ? true : false;
+    return localStorage.getItem("access_token") != null;
   }
 
   logOut(): void {
@@ -91,7 +92,7 @@ export class User {
     return null;
   }
 
-  async getUserCourses() {
+  async getUserCourses(): Promise<[]> {
     if (this.isLogginIn() == true) {
       const response = axios.get("http://localhost:3000/course/getCourses", {
         headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
@@ -100,6 +101,44 @@ export class User {
       return (await response).data;
     }
 
+    return [];
+  }
+
+  setCurrentCodeCourse(codeCourse: string | undefined) {
+    User.getInstance().currentCourse = codeCourse;
+  }
+
+  getCurrentCodeCourse(): string | undefined {
+    return User.getInstance().currentCourse;
+  }
+
+  async getCourseNameByCode(codeCourse: string): Promise<string | null> {
+    if (this.isLogginIn() == true) {
+      const response = axios.get(`http://localhost:3000/course/getCourseName/${codeCourse}`);
+
+      return (await response).data;
+    }
+
     return null;
+  }
+
+  async getCourseUsersByCode(codeCourse: string): Promise<[]> {
+    if (this.isLogginIn() == true) {
+      const response = axios.get(`http://localhost:3000/course/getCourseUsers/${codeCourse}`);
+
+      return (await response).data;
+    }
+
+    return [];
+  }
+
+  async getCourseTasksByCode(codeCourse: string): Promise<[]> {
+    if (this.isLogginIn() == true) {
+      const response = axios.get(`http://localhost:3000/course/getCourseTasks/${codeCourse}`);
+
+      return (await response).data;
+    }
+
+    return [];
   }
 }

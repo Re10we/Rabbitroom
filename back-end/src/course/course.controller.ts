@@ -43,6 +43,21 @@ export class CourseController {
     return this.courseService.getCoursesByUser(username);
   }
 
+  @Get('getCourseName/:codeCourse')
+  getCourseByCode(@Param('codeCourse') codeCourse: string) {
+    return this.courseService.getCourseNameByCode(codeCourse);
+  }
+
+  @Get('getCourseUsers/:codeCourse')
+  getCourseUsersByCode(@Param('codeCourse') codeCourse: string) {
+    return this.courseService.getCourseUsersByCode(codeCourse);
+  }
+
+  @Get('getCourseTasks/:codeCourse')
+  getCourseTasksByCode(@Param('codeCourse') codeCourse: string) {
+    return this.courseService.getCourseTasksByCode(codeCourse);
+  }
+
   @Delete('delete/:nameCourse')
   deleteUser(@Param('nameCourse') nameCourse: string) {
     return this.courseService.deleteByName(nameCourse);

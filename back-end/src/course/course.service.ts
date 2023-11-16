@@ -128,6 +128,56 @@ export class CourseService {
     return courses;
   }
 
+  async getCourseNameByCode(codeCourse: string): Promise<string | null> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return null;
+    }
+
+    return course.nameCourse;
+  }
+
+  async getCourseUsersByCode(
+    codeCourse: string,
+  ): Promise<{ userName: string; role: string }[] | []> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return [];
+    }
+
+    let users = await Promise.all(
+      course.users.map(async (element, index, array) => {
+        const userName = (await this.userModel.findById(element.user)).name;
+        const roleStr = this.getRoleStringByIndex(element.role);
+
+        return { userName: userName, role: roleStr };
+      }),
+    );
+
+    return users;
+  }
+
+  async getCourseTasksByCode(codeCourse: string): Promise<[Task] | []> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return [];
+    }
+
+    return course.tasks;
+  }
+
+  getRoleStringByIndex(indexRole: number): string {
+    if (indexRole == roleUser.admin) {
+      return 'admin';
+    } else if (indexRole == roleUser.student) {
+      return 'student';
+    } else if (indexRole == roleUser.teacher) {
+      return 'teacher';
+    } else {
+      return '';
+    }
+  }
+
   async deleteByName(nameCourse: string): Promise<boolean> {
     return (
       (await this.courseModel.findOneAndRemove({

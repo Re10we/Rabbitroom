@@ -6,7 +6,7 @@ import { User } from '../../user/schemas/user.schema';
 export enum roleUser {
   'admin',
   'student',
-  'teacer',
+  'teacher',
 }
 
 @Schema({ versionKey: false })

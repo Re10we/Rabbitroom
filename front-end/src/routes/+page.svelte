@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { Button, Card, Input, Label, Modal } from "flowbite-svelte";
+  import { Button, Card } from "flowbite-svelte";
   import "../app.postcss";
   import { onMount } from "svelte";
   import { User } from "$lib/user";
-  import JoinCourse from "./course/JoinCourse.svelte";
-  import CreateCourse from "./course/CreateCourse.svelte";
+  import JoinCourse from "./course/auth/JoinCourse.svelte";
+  import CreateCourse from "./course/auth/CreateCourse.svelte";
 
   $: loginingUser = false;
 
   let userName: string;
   let userEmail: string;
   $: userCourses = [];
-  let _idCourse: string;
 
   onMount(async () => {
     if (User.getInstance().isLogginIn() == true) {
@@ -25,8 +24,11 @@
     }
   });
 
-  const handleClickCard = (id: string) => {
-    console.log(id);
+  const handleClickCard = (codeCourse: string) => {
+    //TODO dynamic href for courses
+    const user = User.getInstance();
+
+    user.setCurrentCodeCourse(codeCourse);
   };
 </script>
 
@@ -34,10 +36,10 @@
   {#if loginingUser == true}
     {#if userCourses.length > 0}
       <div class="flex mt-10 h-[50%] w-screen flex-wrap">
-        {#each userCourses as { nameCourse, _id }}
+        {#each userCourses as { nameCourse, codeCourse }}
           <Card
-            href="/"
-            on:click={(e) => handleClickCard(_id)}
+            href="/course"
+            on:click={(e) => handleClickCard(codeCourse)}
             class="ml-12 w-[18rem] h-[16rem]"
             padding="none"
           >

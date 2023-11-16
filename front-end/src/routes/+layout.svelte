@@ -25,8 +25,8 @@
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
   import { sineIn } from "svelte/easing";
-  import JoinCourse from "./course/JoinCourse.svelte";
-  import CreateCourse from "./course/CreateCourse.svelte";
+  import JoinCourse from "./course/auth/JoinCourse.svelte";
+  import CreateCourse from "./course/auth/CreateCourse.svelte";
 
   let hiddenValue = true;
 
