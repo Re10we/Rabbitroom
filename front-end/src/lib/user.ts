@@ -29,7 +29,7 @@ export class User {
   }
 
   logOut(): void {
-    localStorage.removeItem("access_token");
+    localStorage.clear();
   }
 
   async createCourse(nameCourse: string): Promise<string | null> {

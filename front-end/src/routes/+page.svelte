@@ -38,7 +38,7 @@
       <div class="flex mt-10 h-[50%] w-screen flex-wrap">
         {#each userCourses as { nameCourse, codeCourse }}
           <Card
-            href="/course"
+            href="/course/{codeCourse}"
             on:click={(e) => handleClickCard(codeCourse)}
             class="ml-12 w-[18rem] h-[16rem]"
             padding="none"

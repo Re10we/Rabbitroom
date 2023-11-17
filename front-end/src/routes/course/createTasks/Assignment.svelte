@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { User } from "$lib/user";
   import {
     Label,
@@ -8,8 +9,6 @@
     Toolbar,
     ToolbarGroup,
     ToolbarButton,
-    Select,
-    Checkbox,
     MultiSelect,
   } from "flowbite-svelte";
   import { CodeOutline } from "flowbite-svelte-icons";
@@ -20,36 +19,19 @@
 
   let openModal = false;
   let titleTask: string;
-  let usersItem: { value: string; name: string }[] = [
-    { value: "us", name: "United States" },
-    { value: "ca", name: "Canada" },
-    { value: "fr", name: "France" },
-    { value: "jp", name: "Japan" },
-    { value: "ss", name: "asd" },
-    { value: "as", name: "dfg" },
-    { value: "ds", name: "hgj" },
-    { value: "egfg", name: "jkl" },
-    { value: "hgh", name: "nm," },
-    { value: "jhj", name: "zxc" },
-    { value: "ert", name: ".,m" },
-    { value: "jhgj", name: "sdf" },
-    { value: "zxc", name: "qwe" },
-    { value: "cbv", name: "ert" },
-    { value: "qwe", name: "ytu" },
-    { value: "mnbm", name: "iuo" },
-  ];
+  let usersItem: { value: string; name: string }[] = [];
   let selectedUsers: [];
 
   onMount(async () => {
     const user = User.getInstance();
-    const codeCourse = user.getCurrentCodeCourse();
+    const codeCourse = $page.params.codeCourse;
 
     if (codeCourse != undefined) {
-      let allStudent = (await user.getCourseUsersByCode(codeCourse)).filter(
-        (element) => element.role != "admin"
-      );
-
-      console.log(selectedUsers);
+      usersItem = (await user.getCourseUsersByCode(codeCourse))
+        .filter((item) => item["role"] != "admin")
+        .map((item) => {
+          return { value: item["userName"], name: item["userName"] };
+        });
     }
   });
 </script>
@@ -75,7 +57,7 @@
     {/if}
     <div class="ml-[10rem] mr-[3rem] flex flex-col w-[20%]">
       <div>
-        <Label>For</Label>
+        <Label>For students</Label>
         <MultiSelect items={usersItem} bind:value={selectedUsers} size="lg" />
       </div>
       <div>
