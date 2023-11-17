@@ -4,9 +4,11 @@
   import Stream from "./pagesCourse/Stream.svelte";
   import Tasks from "./pagesCourse/Tasks.svelte";
   import Users from "./pagesCourse/Users.svelte";
+  import ClassWork from "./pagesCourse/ClassWork.svelte";
 
   enum ButtonState {
     stream,
+    classWork,
     tasks,
     users,
   }
@@ -24,21 +26,35 @@
   <ButtonGroup>
     <Button
       on:click={(e) => changeButtonState(ButtonState.stream)}
-      class={currentButtonState == ButtonState.stream ? activeClass : defaultClass}>Stream</Button
+      class={currentButtonState == ButtonState.stream ? activeClass : defaultClass}
     >
+      Stream
+    </Button>
+    <Button
+      on:click={(e) => changeButtonState(ButtonState.classWork)}
+      class={currentButtonState == ButtonState.classWork ? activeClass : defaultClass}
+    >
+      Classwork
+    </Button>
     <Button
       on:click={(e) => changeButtonState(ButtonState.tasks)}
-      class={currentButtonState == ButtonState.tasks ? activeClass : defaultClass}>Tasks</Button
+      class={currentButtonState == ButtonState.tasks ? activeClass : defaultClass}
     >
+      Tasks
+    </Button>
     <Button
       on:click={(e) => changeButtonState(ButtonState.users)}
-      class={currentButtonState == ButtonState.users ? activeClass : defaultClass}>Users</Button
+      class={currentButtonState == ButtonState.users ? activeClass : defaultClass}
     >
+      Users
+    </Button>
   </ButtonGroup>
 </div>
 
 {#if currentButtonState == ButtonState.stream}
   <Stream />
+{:else if currentButtonState == ButtonState.classWork}
+  <ClassWork />
 {:else if currentButtonState == ButtonState.tasks}
   <Tasks />
 {:else}
