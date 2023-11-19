@@ -104,14 +104,6 @@ export class User {
     return [];
   }
 
-  setCurrentCodeCourse(codeCourse: string | undefined) {
-    User.getInstance().currentCourse = codeCourse;
-  }
-
-  getCurrentCodeCourse(): string | undefined {
-    return User.getInstance().currentCourse;
-  }
-
   async getCourseNameByCode(codeCourse: string): Promise<string | null> {
     if (this.isLogginIn() == true) {
       const response = axios.get(`http://localhost:3000/course/getCourseName/${codeCourse}`);
@@ -135,6 +127,16 @@ export class User {
   async getCourseTasksByCode(codeCourse: string): Promise<[]> {
     if (this.isLogginIn() == true) {
       const response = axios.get(`http://localhost:3000/course/getCourseTasks/${codeCourse}`);
+
+      return (await response).data;
+    }
+
+    return [];
+  }
+
+  async getCourseTopicsByCode(codeCourse: string): Promise<[]> {
+    if (this.isLogginIn() == true) {
+      const response = axios.get(`http://localhost:3000/course/getCourseTopics/${codeCourse}`);
 
       return (await response).data;
     }

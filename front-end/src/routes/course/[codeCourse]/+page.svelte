@@ -2,16 +2,13 @@
   import "../../../app.postcss";
   import { Button, ButtonGroup } from "flowbite-svelte";
   import Stream from "../pagesCourse/Stream.svelte";
-  import Tasks from "../pagesCourse/Tasks.svelte";
   import Users from "../pagesCourse/Users.svelte";
   import ClassWork from "../pagesCourse/ClassWork.svelte";
   import { browser } from "$app/environment";
-  import { page } from "$app/stores";
 
   enum ButtonState {
     stream,
     classWork,
-    tasks,
     users,
   }
 
@@ -45,12 +42,7 @@
       >
         Classwork
       </Button>
-      <Button
-        on:click={(e) => changeButtonState(ButtonState.tasks)}
-        class={currentButtonState == ButtonState.tasks ? activeClass : defaultClass}
-      >
-        Tasks
-      </Button>
+
       <Button
         on:click={(e) => changeButtonState(ButtonState.users)}
         class={currentButtonState == ButtonState.users ? activeClass : defaultClass}
@@ -64,8 +56,6 @@
     <Stream />
   {:else if currentButtonState == ButtonState.classWork}
     <ClassWork />
-  {:else if currentButtonState == ButtonState.tasks}
-    <Tasks />
   {:else}
     <Users />
   {/if}

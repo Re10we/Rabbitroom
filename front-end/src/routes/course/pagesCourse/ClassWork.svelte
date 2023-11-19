@@ -8,7 +8,11 @@
     ArrowsRepeatSolid,
     ListSolid,
   } from "flowbite-svelte-icons";
-  import Assignment from "../createTasks/Assignment.svelte";
+  import Assignment from "../createTasks/CreateTask.svelte";
+  import CreateTask from "../createTasks/CreateTask.svelte";
+
+  let openModal = false;
+  let typeTask: "assignment" | "material" | "reusePost" | "topic" = "assignment";
 </script>
 
 <div class="mt-6 flex justify-center">
@@ -17,12 +21,46 @@
     <PlusSolid class="w-3 h-3 ml-2 text-white dark:text-white" />
   </Button>
   <Dropdown>
-    <DropdownItem class="flex">
+    <DropdownItem
+      class="flex"
+      on:click={() => {
+        typeTask = "assignment";
+        openModal = true;
+      }}
+    >
       <ClipboardSolid class="mr-2" />
-      <Assignment typeTask="assignment" textButton="Assignment" />
+      Assignment
     </DropdownItem>
-    <DropdownItem class="flex"><BookSolid class="mr-2" />Material</DropdownItem>
-    <DropdownItem class="flex"><ArrowsRepeatSolid class="mr-2" />Reuse post</DropdownItem>
-    <DropdownItem class="flex"><ListSolid class="mr-2" />Topic</DropdownItem>
+    <DropdownItem
+      class="flex"
+      on:click={() => {
+        typeTask = "material";
+        openModal = true;
+      }}
+    >
+      <BookSolid class="mr-2" />
+      Material
+    </DropdownItem>
+    <DropdownItem
+      class="flex"
+      on:click={() => {
+        typeTask = "reusePost";
+        openModal = true;
+      }}
+    >
+      <ArrowsRepeatSolid class="mr-2" />
+      Reuse post
+    </DropdownItem>
+    <DropdownItem
+      class="flex"
+      on:click={() => {
+        typeTask = "topic";
+        openModal = true;
+      }}
+    >
+      <ListSolid class="mr-2" />
+      Topic
+    </DropdownItem>
   </Dropdown>
+  <CreateTask bind:openModal bind:typeTask />
 </div>

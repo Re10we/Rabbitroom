@@ -22,8 +22,8 @@ export class Task extends Document {
   @Prop({ type: Number })
   maxPoints: number;
 
-  @Prop({ type: [String], unique: true })
-  topic: [String];
+  @Prop({ type: String })
+  topic: string;
 
   @Prop({
     type: Array<{ _id: ObjectId; points: Number }>,
@@ -33,6 +33,9 @@ export class Task extends Document {
 
   @Prop({ type: [String] })
   files: [string];
+
+  @Prop({ type: [String] })
+  links: [string];
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

@@ -58,6 +58,11 @@ export class CourseController {
     return this.courseService.getCourseTasksByCode(codeCourse);
   }
 
+  @Get('getCourseTopics/:codeCourse')
+  getCourseTopicsByCode(@Param('codeCourse') codeCourse: string) {
+    return this.courseService.getCourseTopicsByCode(codeCourse);
+  }
+
   @Delete('delete/:nameCourse')
   deleteUser(@Param('nameCourse') nameCourse: string) {
     return this.courseService.deleteByName(nameCourse);

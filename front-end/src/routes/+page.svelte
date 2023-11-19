@@ -27,8 +27,6 @@
   const handleClickCard = (codeCourse: string) => {
     //TODO dynamic href for courses
     const user = User.getInstance();
-
-    user.setCurrentCodeCourse(codeCourse);
   };
 </script>
 

@@ -166,6 +166,15 @@ export class CourseService {
     return course.tasks;
   }
 
+  async getCourseTopicsByCode(codeCourse: string): Promise<[string] | []> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return [];
+    }
+
+    return course.topics;
+  }
+
   getRoleStringByIndex(indexRole: number): string {
     if (indexRole == roleUser.admin) {
       return 'admin';

@@ -25,6 +25,9 @@ export class Course extends Document {
 
   @Prop({ type: Array<{ _id: ObjectId }>, ref: Task.name })
   tasks: [Task];
+
+  @Prop({ type: [String], unique: true })
+  topics: [string];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
