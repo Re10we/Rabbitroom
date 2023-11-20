@@ -4,8 +4,6 @@ import { UserDto } from './dto/createUser.dto';
 import { User } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { ExceptionDto } from 'src/dto/exception.dto';
-import { jwtAccessToken, jwtRefreshToken } from 'src/user/guard/constants';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +13,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(dto: UserDto): Promise<ExceptionDto | User> {
+  async signUp(dto: UserDto): Promise<User> {
     const candidate = await this.userModel.findOne({ email: dto?.email });
 
     if (candidate) {
-      return { code: 200, description: 'this email is storage' };
+      throw new UnauthorizedException();
     }
 
     //adding new user to db
@@ -39,13 +37,13 @@ export class AuthService {
     if (foundUser.password === dto.password) {
       const payload = { idUser: foundUser._id, username: foundUser.name };
       const accessToken = await this.jwtService.signAsync(payload, {
-        secret: jwtAccessToken.secret,
-        expiresIn: '3d',
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
       });
 
       const refreshToken = await this.jwtService.signAsync(payload, {
-        secret: jwtRefreshToken.secret,
-        expiresIn: '15d',
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
       });
       return {
         access_token: accessToken,

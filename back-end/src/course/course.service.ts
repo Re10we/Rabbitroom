@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Task } from './schemas/task.schema';
 import { User } from '../user/schemas/user.schema';
 import { TaskDto } from './dto/task.dto';
+import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class CourseService {
@@ -14,7 +15,7 @@ export class CourseService {
     @InjectModel(Course.name)
     private readonly courseModel: Model<Course>,
     @InjectModel(Task.name)
-    private readonly questModel: Model<Task>,
+    private readonly taskModel: Model<Task>,
   ) {}
 
   private generateRandomString(length: number): string {
@@ -34,7 +35,9 @@ export class CourseService {
     let codeCourse: string = this.generateRandomString(6);
 
     while (await this.isFoundCodeCourse(codeCourse)) {
-      codeCourse = this.generateRandomString(6);
+      codeCourse = this.generateRandomString(
+        parseInt(process.env.CODE_COURSE_LENGHT),
+      );
     }
 
     await this.courseModel.create({
@@ -77,8 +80,56 @@ export class CourseService {
     return isSuccessfullyAdd;
   }
 
-  async createTask(taskDto: TaskDto) {
-    await this.questModel.create();
+  async createTask(owner: string, taskDto: TaskDto) {
+    const task = await this.taskModel.create({
+      owner: owner,
+      due: taskDto.due,
+      title: taskDto.title,
+      description: taskDto.description,
+      maxPoints: taskDto.maxPoints,
+      topic: taskDto.topic,
+      users: taskDto.users,
+      files: [],
+      links: taskDto.links,
+    });
+
+    if (task != null) {
+      let AWS_S3_BUCKET = process.env.AWS_S3_BUCKET_NAME;
+      let s3 = new AWS.S3({
+        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+        region: process.env.AWS_S3_BUCKET_REGION,
+      });
+
+      //upload all files on AWS storage
+      let urls = await Promise.all(
+        taskDto.files.map(async (item) => {
+          const originalname = item.originalname;
+
+          const uploadParams = {
+            Bucket: AWS_S3_BUCKET,
+            Key: task._id + ':' + task.title + '/' + String(originalname),
+            Body: item.buffer,
+            ContentType: item.mimetype,
+          };
+
+          const getParams: AWS.S3.GetObjectRequest = {
+            Bucket: AWS_S3_BUCKET,
+            Key: task._id + ':' + task.title + '/' + String(originalname),
+          };
+
+          //upload file on AWS storage
+          const s3Response = await s3.upload(uploadParams).promise();
+
+          //get url file on AWS storage
+          const url = await s3.getSignedUrlPromise('getObject', getParams);
+
+          return url;
+        }),
+      );
+
+      await task.updateOne({ files: urls });
+    }
   }
 
   async addUserToCourse(
@@ -88,15 +139,11 @@ export class CourseService {
   ): Promise<boolean> {
     const course = await this.courseModel.findOne({ codeCourse: codeCourse });
     if (course == null) {
-      console.log(`course is null`);
-
       return false;
     }
 
     const candidate = this.userModel.findOne({ name: userName });
     if (candidate == null) {
-      console.log(`candidate is null`);
-
       return false;
     }
 
@@ -146,7 +193,7 @@ export class CourseService {
     }
 
     let users = await Promise.all(
-      course.users.map(async (element, index, array) => {
+      course.users.map(async (element) => {
         const userName = (await this.userModel.findById(element.user)).name;
         const roleStr = this.getRoleStringByIndex(element.role);
 

@@ -35,7 +35,7 @@ export class User {
   async createCourse(nameCourse: string): Promise<string | null> {
     if (this.isLogginIn() == true) {
       const response = axios.post<string | null>(
-        `http://localhost:3000/course/create/${nameCourse}`,
+        `http://localhost:3000/course/createCourse/${nameCourse}`,
         {},
         {
           headers: { Authorization: `Bearer ${this.getAccessTokken()}` },

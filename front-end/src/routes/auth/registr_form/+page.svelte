@@ -1,9 +1,13 @@
 <script lang="ts">
   import { Label, Input, Button, Helper } from "flowbite-svelte";
-  import { EnvelopeSolid, LockSolid, UserCircleSolid } from "flowbite-svelte-icons";
-  import { AuthUser, type User } from "../../../lib/authUser";
-  import { redirect } from "@sveltejs/kit";
-  import { goto } from "$app/navigation";
+  import {
+    EnvelopeSolid,
+    EyeOutline,
+    EyeSlashOutline,
+    UserCircleSolid,
+  } from "flowbite-svelte-icons";
+  import { AuthUser } from "../../../lib/authUser";
+  import VerificationEmail from "./Components/VerificationEmail.svelte";
 
   type Field = {
     value: string;
@@ -36,6 +40,9 @@
     color_helper_box: "disabled",
     text_helper_box: "",
   };
+
+  let isShowPassword = false;
+  let openVerificateModal = false;
 
   const validationRegUser = async (candidate: AuthUser): Promise<boolean> => {
     let succesfullyValidate = true;
@@ -149,72 +156,89 @@
 
     await authUser.signUpUser();
 
+    openVerificateModal = true;
+
     window.location.href = "/auth/login_form";
   };
 </script>
 
-<main class="flex flex-col items-center justify-center h-[55rem]">
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Your Username</Label>
-    <Input
-      bind:value={name.value}
-      color={name.color_input_box}
-      id="email"
-      type="text"
-      placeholder="your_username"
-    >
-      <UserCircleSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={name.color_helper_box}>{name.text_helper_box}</Helper>
-  </div>
+<main class="flex justify-center">
+  <div class="flex flex-col justify-center h-[55rem] w-[15rem]">
+    <div class="mb-6">
+      <Label for="input-group-1" class="block mb-2">Your Username</Label>
+      <Input
+        bind:value={name.value}
+        color={name.color_input_box}
+        type="text"
+        placeholder="your_username"
+      >
+        <UserCircleSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+      </Input>
+      <Helper class="mt-2" color={name.color_helper_box}>{name.text_helper_box}</Helper>
+    </div>
 
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Your Email</Label>
-    <Input
-      bind:value={email.value}
-      id="email"
-      type="email"
-      placeholder="name@flowbite.com"
-      color={email.color_input_box}
-    >
-      <EnvelopeSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={email.color_helper_box}>{email.text_helper_box}</Helper>
-  </div>
+    <div class="mb-6">
+      <Label for="input-group-1" class="block mb-2">Your Email</Label>
+      <Input
+        bind:value={email.value}
+        type="email"
+        placeholder="name@flowbite.com"
+        color={email.color_input_box}
+      >
+        <EnvelopeSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+      </Input>
+      <Helper class="mt-2" color={email.color_helper_box}>{email.text_helper_box}</Helper>
+    </div>
 
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Create password</Label>
-    <Input
-      bind:value={password.value}
-      id="password"
-      type="password"
-      placeholder="•••••"
-      color={password.color_input_box}
-    >
-      <LockSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={password.color_helper_box}>{password.text_helper_box}</Helper>
-  </div>
+    <div class="mb-6">
+      <Label class="block mb-2">Create password</Label>
+      <Input
+        type={isShowPassword ? "text" : "password"}
+        placeholder="•••••"
+        bind:value={password.value}
+        color={password.color_input_box}
+      >
+        <button
+          slot="left"
+          on:click={() => (isShowPassword = !isShowPassword)}
+          class="pointer-events-auto"
+        >
+          {#if isShowPassword}
+            <EyeOutline class="w-6 h-6" />
+          {:else}
+            <EyeSlashOutline class="w-6 h-6" />
+          {/if}
+        </button>
+      </Input>
+      <Helper class="mt-2" color={password.color_helper_box}>{password.text_helper_box}</Helper>
+    </div>
 
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Confirm password</Label>
-    <Input
-      bind:value={confirm_password.value}
-      id="password"
-      type="password"
-      placeholder="•••••"
-      color={confirm_password.color_input_box}
-    >
-      <LockSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={confirm_password.color_helper_box}
-      >{confirm_password.text_helper_box}</Helper
-    >
-  </div>
-  <div>
+    <div class="mb-6">
+      <Label class="block mb-2">Confirm password</Label>
+      <Input
+        type={isShowPassword ? "text" : "password"}
+        bind:value={confirm_password.value}
+        color={confirm_password.color_input_box}
+        placeholder="•••••"
+      >
+        <button
+          slot="left"
+          on:click={() => (isShowPassword = !isShowPassword)}
+          class="pointer-events-auto"
+        >
+          {#if isShowPassword}
+            <EyeOutline class="w-6 h-6" />
+          {:else}
+            <EyeSlashOutline class="w-6 h-6" />
+          {/if}
+        </button>
+      </Input>
+      <Helper class="mt-2" color={confirm_password.color_helper_box}>
+        {confirm_password.text_helper_box}
+      </Helper>
+    </div>
+
     <Button on:click={registrationClick}>Sign up</Button>
+    <VerificationEmail bind:openModal={openVerificateModal} />
   </div>
 </main>
-
-<style>
-</style>

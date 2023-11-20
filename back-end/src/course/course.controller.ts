@@ -6,17 +6,22 @@ import {
   Param,
   Delete,
   Get,
+  UseInterceptors,
+  Body,
+  UploadedFiles,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { AuthGuard } from '../user/guard/auth.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { TaskDto } from './dto/task.dto';
 
 @Controller('course')
 @ApiTags('course-controller')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
-  @Post('create/:nameCourse')
+  @Post('createCourse/:nameCourse')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')
   createCourse(@Request() req, @Param('nameCourse') nameCourse: string) {
@@ -32,6 +37,22 @@ export class CourseController {
     const { username } = req.user;
 
     return this.courseService.joinCourse(username, codeCourse);
+  }
+
+  @Post('createTask')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('files'))
+  createTask(
+    @Request() req,
+    @Body() dto: TaskDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    dto.files = files;
+
+    const { username } = req.user;
+    return this.courseService.createTask(username, dto);
   }
 
   @Get('getCourses')

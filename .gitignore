@@ -30,3 +30,6 @@ front-end/.env.*
 front-end/!.env.example
 front-end/vite.config.js.timestamp-*
 front-end/vite.config.ts.timestamp-*
+
+#back
+back-end/*.env

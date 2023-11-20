@@ -8,10 +8,7 @@ export class Task extends Document {
   owner: string;
 
   @Prop({ type: Date })
-  dataOfCreate: Date;
-
-  @Prop({ type: Date })
-  timeOfDeadline: Date;
+  due: Date;
 
   @Prop({ type: String })
   title: string;

@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Label, Input, Button, Helper } from "flowbite-svelte";
-  import { EnvelopeSolid, LockSolid } from "flowbite-svelte-icons";
+  import { Label, Input, Button, Helper, Checkbox } from "flowbite-svelte";
+  import { EnvelopeSolid, EyeOutline, EyeSlashOutline, LockSolid } from "flowbite-svelte-icons";
   import { AuthUser, type User } from "../../../lib/authUser";
   import { AxiosError, type AxiosResponse } from "axios";
-  import { goto } from "$app/navigation";
 
   type Field = {
     value: string;
@@ -24,6 +23,8 @@
     color_helper_box: "disabled",
     text_helper_box: "",
   };
+
+  let isShowPassword = false;
 
   const validationLoginUser = async (candidate: AuthUser): Promise<boolean> => {
     let succesfullyValidate = true;
@@ -97,42 +98,59 @@
   };
 </script>
 
-<main class="flex flex-col items-center justify-center h-[55rem]">
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Email</Label>
-    <Input
-      bind:value={email.value}
-      id="email"
-      type="email"
-      placeholder="name@flowbite.com"
-      color={email.color_input_box}
-    >
-      <EnvelopeSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={email.color_helper_box}>{email.text_helper_box}</Helper>
-  </div>
+<main class="flex justify-center">
+  <div class="flex flex-col justify-center h-[55rem] w-[20rem]">
+    <div class="mb-6">
+      <Label for="input-group-1" class="block mb-2">Email</Label>
+      <Input
+        bind:value={email.value}
+        id="email"
+        type="email"
+        placeholder="name@flowbite.com"
+        color={email.color_input_box}
+      >
+        <EnvelopeSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+      </Input>
+      <Helper class="mt-2" color={email.color_helper_box}>{email.text_helper_box}</Helper>
+    </div>
 
-  <div class="mb-6">
-    <Label for="input-group-1" class="block mb-2">Password</Label>
-    <Input
-      bind:value={password.value}
-      id="password"
-      type="password"
-      color={password.color_input_box}
-      placeholder="•••••"
-    >
-      <LockSolid slot="left" class="w-5 h-5 text-gray-500 dark:text-gray-400" />
-    </Input>
-    <Helper class="mt-2" color={password.color_helper_box}>{password.text_helper_box}</Helper>
-  </div>
+    <div class="mb-6">
+      <Label class="block mb-2">Password</Label>
+      <Input
+        type={isShowPassword ? "text" : "password"}
+        placeholder="•••••"
+        bind:value={password.value}
+        color={password.color_input_box}
+      >
+        <button
+          slot="left"
+          on:click={() => (isShowPassword = !isShowPassword)}
+          class="pointer-events-auto"
+        >
+          {#if isShowPassword}
+            <EyeOutline class="w-6 h-6" />
+          {:else}
+            <EyeSlashOutline class="w-6 h-6" />
+          {/if}
+        </button>
+      </Input>
+      <Helper class="mt-2" color={password.color_helper_box}>{password.text_helper_box}</Helper>
+    </div>
 
-  <div>
-    <Button on:click={handleLoginClick}>Sign in</Button>
-    <Button href="/auth/registr_form" class="bg-transparent hover:bg-transparent text-black"
-      >Sign up</Button
-    >
+    <div class="flex items-start">
+      <Checkbox>Remember me</Checkbox>
+      <a href="/" class="ml-auto text-sm text-primary-700 hover:underline dark:text-primary-500">
+        Lost password?
+      </a>
+    </div>
+
+    <Button class="mt-[1rem]" on:click={handleLoginClick}>Sign in</Button>
+
+    <div class="mt-[0.5rem] text-sm font-medium text-gray-500 dark:text-gray-300">
+      Not registered?
+      <a href="/auth/registr_form" class="text-primary-700 hover:underline dark:text-primary-500">
+        Sign up
+      </a>
+    </div>
   </div>
 </main>
-
-<style>
-</style>
