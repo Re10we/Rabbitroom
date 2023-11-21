@@ -82,7 +82,11 @@ export class CourseService {
     return isSuccessfullyAdd;
   }
 
-  async createTask(codeCourse: string, owner: string, taskDto: TaskDto) {
+  async createTask(
+    codeCourse: string,
+    owner: string,
+    taskDto: TaskDto,
+  ): Promise<boolean> {
     const task = await this.taskModel.create({
       owner: owner,
       due: taskDto.due,
@@ -153,6 +157,8 @@ export class CourseService {
 
       await task.updateOne({ files: urls });
     }
+
+    return isSuccessfullyAdd;
   }
 
   async addTaskToCourse(task: Task, codeCourse: string): Promise<boolean> {

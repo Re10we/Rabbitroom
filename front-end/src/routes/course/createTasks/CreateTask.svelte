@@ -115,8 +115,8 @@
 
       formData.append("title", titleTask);
       formData.append("description", descriptionTask);
-      formData.append("due", dueValue);
-      formData.append("maxPoints", maxPointsValue);
+      formData.append("due", dueValue ?? "");
+      formData.append("maxPoints", maxPointsValue ?? "");
       formData.append("topic", selectedTopic);
       formData.append("users", selectedUsers as string[]);
       files.map((item) => {
@@ -130,6 +130,11 @@
       );
 
       const response = await user.createTask(formData, codeCourse);
+      if (response) {
+        openModal = false;
+
+        window.location.reload();
+      }
     }
   };
 </script>
