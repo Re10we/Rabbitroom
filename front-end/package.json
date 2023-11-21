@@ -28,6 +28,7 @@
     "axios": "^1.6.0",
     "flowbite": "^1.8.1",
     "flowbite-svelte": "^0.44.18",
+    "formdata-node": "^6.0.3",
     "prettier": "^3.0.3"
   }
 }

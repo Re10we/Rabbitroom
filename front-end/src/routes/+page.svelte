@@ -23,11 +23,6 @@
       userCourses = await user.getUserCourses();
     }
   });
-
-  const handleClickCard = (codeCourse: string) => {
-    //TODO dynamic href for courses
-    const user = User.getInstance();
-  };
 </script>
 
 <main>
@@ -35,12 +30,7 @@
     {#if userCourses.length > 0}
       <div class="flex mt-10 h-[50%] w-screen flex-wrap">
         {#each userCourses as { nameCourse, codeCourse }}
-          <Card
-            href="/course/{codeCourse}"
-            on:click={(e) => handleClickCard(codeCourse)}
-            class="ml-12 w-[18rem] h-[16rem]"
-            padding="none"
-          >
+          <Card href="/course/{codeCourse}" class="ml-12 w-[18rem] h-[16rem]" padding="none">
             <div
               class="relative bg-[url('/yaiko_paravoz.png')] h-[7rem] rounded-t-md bg-no-repeat bg-center bg-cover"
             >

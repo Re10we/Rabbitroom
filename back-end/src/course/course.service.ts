@@ -32,7 +32,9 @@ export class CourseService {
   }
 
   async createCourse(userName: string, nameCourse: string): Promise<string> {
-    let codeCourse: string = this.generateRandomString(6);
+    let codeCourse: string = this.generateRandomString(
+      parseInt(process.env.CODE_COURSE_LENGHT),
+    );
 
     while (await this.isFoundCodeCourse(codeCourse)) {
       codeCourse = this.generateRandomString(
@@ -80,7 +82,7 @@ export class CourseService {
     return isSuccessfullyAdd;
   }
 
-  async createTask(owner: string, taskDto: TaskDto) {
+  async createTask(codeCourse: string, owner: string, taskDto: TaskDto) {
     const task = await this.taskModel.create({
       owner: owner,
       due: taskDto.due,
@@ -88,18 +90,21 @@ export class CourseService {
       description: taskDto.description,
       maxPoints: taskDto.maxPoints,
       topic: taskDto.topic,
-      users: taskDto.users,
+      students: taskDto.students,
       files: [],
       links: taskDto.links,
     });
 
-    if (task != null) {
+    const isSuccessfullyAdd = this.addTaskToCourse(task, codeCourse);
+
+    if (task != null && taskDto.files != undefined && isSuccessfullyAdd) {
       let AWS_S3_BUCKET = process.env.AWS_S3_BUCKET_NAME;
       let s3 = new AWS.S3({
         accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
         region: process.env.AWS_S3_BUCKET_REGION,
       });
+      const course = await this.courseModel.findOne({ codeCourse: codeCourse });
 
       //upload all files on AWS storage
       let urls = await Promise.all(
@@ -108,14 +113,32 @@ export class CourseService {
 
           const uploadParams = {
             Bucket: AWS_S3_BUCKET,
-            Key: task._id + ':' + task.title + '/' + String(originalname),
+            Key:
+              course.nameCourse +
+              ':' +
+              course.codeCourse +
+              '/' +
+              task.title +
+              ':' +
+              task._id +
+              '/' +
+              String(originalname),
             Body: item.buffer,
             ContentType: item.mimetype,
           };
 
           const getParams: AWS.S3.GetObjectRequest = {
             Bucket: AWS_S3_BUCKET,
-            Key: task._id + ':' + task.title + '/' + String(originalname),
+            Key:
+              course.nameCourse +
+              ':' +
+              course.codeCourse +
+              '/' +
+              task.title +
+              ':' +
+              task._id +
+              '/' +
+              String(originalname),
           };
 
           //upload file on AWS storage
@@ -130,6 +153,25 @@ export class CourseService {
 
       await task.updateOne({ files: urls });
     }
+  }
+
+  async addTaskToCourse(task: Task, codeCourse: string): Promise<boolean> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return false;
+    }
+
+    if (task == null) {
+      return false;
+    }
+
+    const isSuccessfullyPush = course.tasks.length != course.tasks.push(task);
+
+    if (isSuccessfullyPush == true) {
+      await course.updateOne({ tasks: course.tasks });
+    }
+
+    return isSuccessfullyPush;
   }
 
   async addUserToCourse(
@@ -156,6 +198,32 @@ export class CourseService {
     }
 
     return isSuccessfullyPush;
+  }
+
+  async addTopicToCourse(
+    codeCourse: string,
+    nameTopic: string,
+  ): Promise<boolean> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return false;
+    }
+
+    const isFoundTopic =
+      course.topics.find((element) => element == nameTopic) == nameTopic;
+
+    if (isFoundTopic) {
+      return false;
+    } else {
+      const isSuccessfullyPush =
+        course.topics.length != course.topics.push(nameTopic);
+
+      if (isSuccessfullyPush) {
+        await course.updateOne({ topics: course.topics });
+      }
+
+      return isSuccessfullyPush;
+    }
   }
 
   async isFoundCodeCourse(codeCourse: string): Promise<boolean> {

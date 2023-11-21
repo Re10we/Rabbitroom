@@ -39,7 +39,7 @@ export class CourseController {
     return this.courseService.joinCourse(username, codeCourse);
   }
 
-  @Post('createTask')
+  @Post('createTask/:codeCourse')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')
   @ApiConsumes('multipart/form-data')
@@ -47,12 +47,23 @@ export class CourseController {
   createTask(
     @Request() req,
     @Body() dto: TaskDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Param('codeCourse') codeCourse: string,
   ) {
+    const { username } = req.user;
     dto.files = files;
 
-    const { username } = req.user;
-    return this.courseService.createTask(username, dto);
+    return this.courseService.createTask(codeCourse, username, dto);
+  }
+
+  @Post('createTopic/:codeCourse/:nameTopic')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  createTopic(
+    @Param('codeCourse') codeCourse: string,
+    @Param('nameTopic') nameTopic: string,
+  ) {
+    return this.courseService.addTopicToCourse(codeCourse, nameTopic);
   }
 
   @Get('getCourses')

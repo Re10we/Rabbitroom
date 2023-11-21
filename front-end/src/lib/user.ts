@@ -1,4 +1,5 @@
 import axios from "axios";
+import type FormData from "form-data";
 
 /**
  * The User class defines the `getInstance` method that lets clients access
@@ -6,7 +7,6 @@ import axios from "axios";
  */
 export class User {
   private static instance: User;
-  private currentCourse: string | undefined;
 
   private constructor() {}
 
@@ -59,6 +59,42 @@ export class User {
       );
 
       return (await response).data;
+    }
+
+    return false;
+  }
+
+  async createTask(formData: FormData, codeCourse: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.post(
+        `http://localhost:3000/course/createTask/${codeCourse}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessTokken()}`,
+          },
+        }
+      );
+
+      return response.data;
+    }
+
+    return false;
+  }
+
+  async createTopic(codeCourse: string, nameTopic: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.post<boolean>(
+        `http://localhost:3000/course/createTopic/${codeCourse}/${nameTopic}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessTokken()}`,
+          },
+        }
+      );
+
+      return response.data;
     }
 
     return false;

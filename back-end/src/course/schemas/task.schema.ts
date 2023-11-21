@@ -26,7 +26,7 @@ export class Task extends Document {
     type: Array<{ _id: ObjectId; points: Number }>,
     ref: User.name,
   })
-  users: [{ user: User; points: number }];
+  students: [{ user: User; points: number }];
 
   @Prop({ type: [String] })
   files: [string];

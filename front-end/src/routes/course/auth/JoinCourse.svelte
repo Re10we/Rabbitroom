@@ -32,8 +32,10 @@
     } else {
       joinCourse = true;
     }
-  }}>Join course</span
+  }}
 >
+  Join course
+</span>
 
 <Modal bind:open={joinCourse} size="xs" class="w-full">
   <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Join course</h3>

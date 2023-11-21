@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../user/schemas/user.schema';
 
 export class TaskDto {
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'string', required: true })
   title: string;
 
   @ApiProperty({ type: 'string', required: false })
@@ -14,11 +14,11 @@ export class TaskDto {
   @ApiProperty({ type: 'string', format: 'number', required: false })
   maxPoints: number;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'string', required: true })
   topic: string;
 
-  @ApiProperty({ isArray: true, type: 'object', required: false })
-  users: [{ user: User; points: number }];
+  @ApiProperty({ isArray: true, type: 'string', required: false })
+  students: [string];
 
   @ApiProperty({
     isArray: true,
@@ -26,7 +26,7 @@ export class TaskDto {
     format: 'binary',
     required: false,
   })
-  files: Array<Express.Multer.File>;
+  files: Express.Multer.File[];
 
   @ApiProperty({ isArray: true, type: 'string', required: false })
   links: [string];

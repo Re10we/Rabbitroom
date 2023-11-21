@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { User } from "$lib/user";
   import "../../../app.postcss";
   import { AccordionItem, Accordion } from "flowbite-svelte";
@@ -11,7 +12,7 @@
   onMount(async () => {
     const user = User.getInstance();
 
-    codeCourse = user.getCurrentCodeCourse();
+    const codeCourse = $page.params.codeCourse;
     if (codeCourse != undefined) {
       nameCourse = await user.getCourseNameByCode(codeCourse);
     }

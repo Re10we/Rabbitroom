@@ -18,25 +18,32 @@
   } from "flowbite-svelte";
   import { CodeOutline, CloseSolid } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
+  import FormData from "form-data";
+  import CreateTopic from "./CreateTopic.svelte";
 
   export let typeTask: "assignment" | "material" | "reusePost" | "topic";
   export let openModal = false;
 
-  let titleTask: string;
-  let descriptionTask: string;
-  let pathFiles: { value: string; name: string }[] = [];
-  let pathFileValue: string;
-  let files: FileList;
+  let titleTask: string = "";
+  let descriptionTask: string = "";
+  let files: File[] = [];
+  let currentFile: FileList;
 
   let usersItem: { value: string; name: string }[] = [];
-  let topicItems: { value: string; name: string }[] = [];
-
   let selectedUsers: (string | number)[];
-  let selectedTopic: string;
 
-  $: currentLinkUrl = "";
-  $: linkButtonDisabled = true;
+  let topicItems: { value: string; name: string }[] = [];
+  let selectedTopic: string = "No topic";
+
   let attachedLinks: { href: string; name: string }[] = [];
+  let currentLinkUrl = "";
+
+  let linkButtonDisabled = true;
+
+  let dueValue: Date;
+  let maxPointsValue: number;
+
+  let openModalTopic = false;
 
   onMount(async () => {
     const user = User.getInstance();
@@ -92,10 +99,37 @@
   };
 
   const handleClickAddPathFiles = () => {
-    if (pathFileValue.length > 0) {
-      pathFiles.push({ value: pathFileValue, name: files[0].name });
+    if (currentFile.length > 0) {
+      files.push(currentFile[0]);
 
-      pathFiles = pathFiles;
+      files = files;
+    }
+  };
+
+  const handleClickCreateTask = async () => {
+    const user = User.getInstance();
+    const codeCourse = $page.params.codeCourse;
+
+    if (titleTask != "") {
+      const formData: FormData = new FormData();
+
+      formData.append("title", titleTask);
+      formData.append("description", descriptionTask);
+      formData.append("due", dueValue);
+      formData.append("maxPoints", maxPointsValue);
+      formData.append("topic", selectedTopic);
+      formData.append("users", selectedUsers as string[]);
+      files.map((item) => {
+        formData.append("files", item, item.name);
+      });
+      formData.append(
+        "links",
+        attachedLinks.map((item) => {
+          return item.href;
+        })
+      );
+
+      const response = await user.createTask(formData, codeCourse);
     }
   };
 </script>
@@ -122,13 +156,13 @@
       <div class="mt-[2rem]">
         <Label>Attach file</Label>
         <div class="flex">
-          <Fileupload class="rounded-r-none" bind:value={pathFileValue} bind:files />
+          <Fileupload class="rounded-r-none" bind:files={currentFile} />
           <Button on:click={handleClickAddPathFiles} class="rounded-l-none">Attach</Button>
         </div>
       </div>
 
-      {#if pathFiles.length > 0}
-        <Listgroup items={pathFiles} let:item class="mt-[2rem]">
+      {#if files.length > 0}
+        <Listgroup items={files} let:item class="mt-[2rem]">
           <div class="grid grid-cols-2">
             <div class="col-span">
               <span class="flex flex-col"> {item.name} </span>
@@ -137,9 +171,9 @@
               <CloseSolid
                 class="cursor-pointer w-6 h-6 outline-0"
                 on:click={() => {
-                  let itemIndex = pathFiles.indexOf(item);
+                  let itemIndex = files.indexOf(item);
 
-                  pathFiles = pathFiles.filter((e, i) => i !== itemIndex);
+                  files = files.filter((e, i) => i !== itemIndex);
                 }}
               />
             </div>
@@ -203,24 +237,31 @@
       {#if typeTask == "assignment"}
         <div class="mb-[1rem]">
           <Label>Points</Label>
-          <NumberInput min="0" max="100" />
+          <NumberInput min="0" max="100" bind:value={maxPointsValue} />
         </div>
         <div class="mb-[1rem]">
           <Label>Due</Label>
-          <Input type="date" />
+          <Input type="date" bind:value={dueValue} />
         </div>
       {/if}
       <div>
         <Label>Topic</Label>
-        <Select class="mt-2" bind:value={selectedTopic} placeholder="">
-          <option selected value="create">Create topic</option>
-
+        <Select
+          class="mt-2"
+          bind:value={selectedTopic}
+          on:change={() => {
+            if (selectedTopic == "createTopic") {
+              openModalTopic = true;
+              openModal = false;
+            }
+          }}
+        >
+          <option value="createTopic">Create topic</option>
+          <option selected value="No topic">No topic</option>
           {#if topicItems.length > 0}
             {#each topicItems as { value, name }}
               <option {value}>{name}</option>
             {/each}
-          {:else}
-            <option>No topic</option>
           {/if}
         </Select>
       </div>
@@ -228,7 +269,15 @@
   </div>
   <svelte:fragment slot="footer">
     <div class="flex justify-end w-full">
-      <Button class="w-[20%] mr-[2.5rem]">Create</Button>
+      {#if (typeTask == "assignment" && (titleTask == "" || !dueValue || new Date(dueValue).toLocaleDateString() == new Date().toLocaleDateString())) || (typeTask == "material" && titleTask == "")}
+        <Button on:click={handleClickCreateTask} class="w-[20%] mr-[2.5rem]" disabled>
+          Create
+        </Button>
+      {:else}
+        <Button on:click={handleClickCreateTask} class="w-[20%] mr-[2.5rem]">Create</Button>
+      {/if}
     </div>
   </svelte:fragment>
 </Modal>
+
+<CreateTopic bind:openModal={openModalTopic} />
