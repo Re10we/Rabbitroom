@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios";
+import axios, { Axios, type AxiosResponse } from "axios";
 
 export type User = {
   name: string;
@@ -7,28 +7,32 @@ export type User = {
 };
 
 export class AuthUser {
+  private axiosInstance: Axios;
+
   constructor(private user: User) {
     this.user = user;
+    this.axiosInstance = axios.create({
+      withCredentials: true,
+      baseURL: "http://localhost:3000",
+    });
   }
 
   async signUpUser(): Promise<AxiosResponse<User, any>> {
-    const response = await axios.post<User>("http://localhost:3000/auth/signUp", this.user);
+    const response = await this.axiosInstance.post<User>("/auth/signUp", this.user);
 
     return response;
   }
 
-  async signInUser(): Promise<AxiosResponse<string, any>> {
-    const response = await axios.post<string>("http://localhost:3000/auth/signIn", this.user);
-
-    return response;
+  async signInUser(): Promise<void> {
+    await this.axiosInstance.post<boolean>("/auth/signIn", this.user);
   }
 
   async isStorageEmail(): Promise<boolean> {
-    return (await axios.get(`http://localhost:3000/auth/isStorageEmail/${this.user.email}`)).data;
+    return (await this.axiosInstance.get(`/auth/isStorageEmail/${this.user.email}`)).data;
   }
 
   async isStorageUserName(): Promise<boolean> {
-    return (await axios.get(`http://localhost:3000/auth/isStorageUserName/${this.user.name}`)).data;
+    return (await this.axiosInstance.get(`/auth/isStorageUserName/${this.user.name}`)).data;
   }
 
   isValidEmail(): boolean {

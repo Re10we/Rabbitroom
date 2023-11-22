@@ -1,235 +1,137 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 import type FormData from "form-data";
 
-/**
- * The User class defines the `getInstance` method that lets clients access
- * the unique singleton instance.
- */
 export class User {
   private static instance: User;
+  private static axiosInstance: Axios;
 
   private constructor() {}
 
-  /**
-   * The static method that controls the access to the singleton instance.
-   *
-   * This implementation let you subclass the Singleton class while keeping
-   * just one instance of each subclass around.
-   */
   static getInstance(): User {
     if (!User.instance) {
       User.instance = new User();
+      User.axiosInstance = axios.create({
+        withCredentials: true,
+        baseURL: "http://localhost:3000",
+      });
     }
 
     return User.instance;
   }
 
-  isLogginIn(): boolean {
-    return localStorage.getItem("access_token") != null;
-  }
+  async logOut(): Promise<void> {
+    await User.axiosInstance.get("/auth/logOut");
 
-  logOut(): void {
     localStorage.clear();
+  }
+  async isLogginIn(): Promise<boolean> {
+    try {
+      const response = await User.axiosInstance.get("/user/inSession");
+
+      return response.data;
+    } catch {
+      return false;
+    }
   }
 
   async createCourse(nameCourse: string): Promise<string | null> {
-    if (this.isLogginIn() == true) {
-      const response = axios.post<string | null>(
-        `http://localhost:3000/course/createCourse/${nameCourse}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
-        }
-      );
+    const response = await User.axiosInstance.post<string | null>(
+      `/course/createCourse/${nameCourse}`,
+      {}
+    );
 
-      return (await response).data;
-    }
-
-    return null;
+    return response.data;
   }
 
   async joinCourse(codeCourse: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = axios.post<boolean>(
-        `http://localhost:3000/course/join/${codeCourse}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
-        }
-      );
+    const response = await User.axiosInstance.post<boolean>(`/course/join/${codeCourse}`, {});
 
-      return (await response).data;
-    }
-
-    return false;
+    return response.data;
   }
 
   async createTask(formData: FormData, codeCourse: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.post(
-        `http://localhost:3000/course/createTask/${codeCourse}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessTokken()}`,
-          },
-        }
-      );
+    const response = await User.axiosInstance.post(`/course/createTask/${codeCourse}`, formData);
 
-      return response.data;
-    }
-
-    return false;
+    return response.data;
   }
 
   async createTopic(codeCourse: string, nameTopic: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.post<boolean>(
-        `http://localhost:3000/course/createTopic/${codeCourse}/${nameTopic}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessTokken()}`,
-          },
-        }
-      );
+    const response = await User.axiosInstance.post<boolean>(
+      `/course/createTopic/${codeCourse}/${nameTopic}`
+    );
 
-      return response.data;
-    }
-
-    return false;
+    return response.data;
   }
 
   async deleteTaskFromCourse(idTask: string, codeCourse: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.delete<boolean>(
-        `http://localhost:3000/course/deleteTask/${codeCourse}/${idTask}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessTokken()}`,
-          },
-        }
-      );
+    const response = await User.axiosInstance.delete<boolean>(
+      `/course/deleteTask/${codeCourse}/${idTask}`
+    );
 
-      return response.data;
-    }
-
-    return false;
-  }
-
-  getAccessTokken(): string | null {
-    return localStorage.getItem("access_token");
+    return response.data;
   }
 
   async getUserName() {
-    if (this.isLogginIn() == true) {
-      const response = axios.get("http://localhost:3000/user/userName", {
-        headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
-      });
+    const response = await User.axiosInstance.get("/user/userName");
 
-      return (await response).data;
-    }
-
-    return null;
+    return response.data;
   }
 
   async getUserEmail() {
-    if (this.isLogginIn() == true) {
-      const response = axios.get("http://localhost:3000/user/userEmail", {
-        headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
-      });
+    const response = await User.axiosInstance.get("/user/userEmail");
 
-      return (await response).data;
-    }
-
-    return null;
+    return response.data;
   }
 
   async getUserCourses(): Promise<[]> {
-    if (this.isLogginIn() == true) {
-      const response = axios.get("http://localhost:3000/course/getCourses", {
-        headers: { Authorization: `Bearer ${this.getAccessTokken()}` },
-      });
+    const response = await User.axiosInstance.get("/course/getCourses");
 
-      return (await response).data;
-    }
-
-    return [];
+    return await response.data;
   }
 
   async getCourseNameByCode(codeCourse: string): Promise<string | null> {
-    if (this.isLogginIn() == true) {
-      const response = axios.get(`http://localhost:3000/course/getCourseName/${codeCourse}`);
+    const response = await User.axiosInstance.get(`/course/getCourseName/${codeCourse}`);
 
-      return (await response).data;
-    }
-
-    return null;
+    return response.data;
   }
 
   async getCourseUsersByCode(codeCourse: string): Promise<[]> {
-    if (this.isLogginIn() == true) {
-      const response = axios.get(`http://localhost:3000/course/getCourseUsers/${codeCourse}`);
+    const response = await User.axiosInstance.get(`/course/getCourseUsers/${codeCourse}`);
 
-      return (await response).data;
-    }
-
-    return [];
+    return response.data;
   }
 
   async getCourseTasksByCode(codeCourse: string): Promise<[]> {
-    if (this.isLogginIn() == true) {
-      const response = axios.get(`http://localhost:3000/course/getCourseTasks/${codeCourse}`);
+    const response = await User.axiosInstance.get(`/course/getCourseTasks/${codeCourse}`);
 
-      return (await response).data;
-    }
-
-    return [];
+    return response.data;
   }
 
   async getCourseTopicsByCode(codeCourse: string): Promise<[]> {
-    if (this.isLogginIn() == true) {
-      const response = axios.get(`http://localhost:3000/course/getCourseTopics/${codeCourse}`);
+    const response = await User.axiosInstance.get(`/course/getCourseTopics/${codeCourse}`);
 
-      return (await response).data;
-    }
-
-    return [];
+    return response.data;
   }
 
   async isAdminUser(codeCourse: string, userName: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.get(
-        `http://localhost:3000/course/isAdminUser/${codeCourse}/${userName}`
-      );
+    const response = await User.axiosInstance.get(`/course/isAdminUser/${codeCourse}/${userName}`);
 
-      return response.data;
-    }
-
-    return false;
+    return response.data;
   }
 
   async isTeacherUser(codeCourse: string, userName: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.get(
-        `http://localhost:3000/course/isTeacherUser/${codeCourse}/${userName}`
-      );
+    const response = await User.axiosInstance.get(
+      `/course/isTeacherUser/${codeCourse}/${userName}`
+    );
 
-      return response.data;
-    }
-
-    return false;
+    return response.data;
   }
 
   async isStudentUser(codeCourse: string, userName: string): Promise<boolean> {
-    if (this.isLogginIn() == true) {
-      const response = await axios.get(
-        `http://localhost:3000/course/isStudentUser/${codeCourse}/${userName}`
-      );
+    const response = await User.axiosInstance.get(
+      `/course/isStudentUser/${codeCourse}/${userName}`
+    );
 
-      return response.data;
-    }
-
-    return false;
+    return response.data;
   }
 }

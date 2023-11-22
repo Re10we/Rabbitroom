@@ -66,11 +66,7 @@
       return;
     }
     try {
-      const response: AxiosResponse<string, any> = await authUser.signInUser();
-
-      const access_token = response.data;
-
-      localStorage.setItem("access_token", access_token); //save access_token in local storage
+      await authUser.signInUser();
 
       window.location.href = "/";
     } catch (error: any) {

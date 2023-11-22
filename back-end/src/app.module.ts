@@ -7,10 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://renwie:ssas_bro@cluster0.7ey0tad.mongodb.net/rabbitroom?retryWrites=true&w=majority',
-    ),
     ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.PATH_TO_DB),
     AuthModule,
     UserModule,
     CourseModule,

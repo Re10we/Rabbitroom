@@ -16,8 +16,6 @@
 
       if (codeCourse != null) {
         window.location.reload();
-
-        console.log("Create course!");
       }
     }
   };

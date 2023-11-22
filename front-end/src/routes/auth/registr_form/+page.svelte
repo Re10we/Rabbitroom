@@ -156,8 +156,6 @@
 
     await authUser.signUpUser();
 
-    openVerificateModal = true;
-
     window.location.href = "/auth/login_form";
   };
 </script>

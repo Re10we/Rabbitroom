@@ -16,17 +16,19 @@ import { AuthGuard } from './guard/auth.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('all')
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
-  }
-
   @Post('changeName/:newName')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('bearerAuth')
   changeNameUser(@Request() req, @Param('newName') newName: string) {
     //TODO change username
     return req.user;
+  }
+
+  @Get('inSession')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  isSession() {
+    return true;
   }
 
   @Get('userName')

@@ -4,6 +4,7 @@ import { UserDto } from './dto/createUser.dto';
 import { User } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    dto.password = await bcrypt.hash(
+      dto.password,
+      parseInt(process.env.SALT_OR_ROUNDS),
+    );
+
     //adding new user to db
     return await this.userModel.create(dto);
   }
@@ -34,7 +40,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    if (foundUser.password === dto.password) {
+    if (await bcrypt.compare(dto.password, foundUser.password)) {
       const payload = { idUser: foundUser._id, username: foundUser.name };
       const accessToken = await this.jwtService.signAsync(payload, {
         secret: process.env.JWT_ACCESS_TOKEN_SECRET,

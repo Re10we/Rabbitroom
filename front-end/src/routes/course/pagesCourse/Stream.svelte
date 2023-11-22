@@ -21,8 +21,6 @@
     isAdminUser = await user.isAdminUser(codeCourse, userName);
 
     tasks = (await user.getCourseTasksByCode(codeCourse)).reverse();
-
-    //isFoundInTask = tasks.students {name:string,points:number}[]).find((element) => element.name == nameUser) == nameUser;
   });
 
   const handleVisibilityTasks = (
@@ -47,17 +45,31 @@
 
 <div class="mt-6 flex justify-center ml-10">
   <!--Questions list-->
-  <Accordion class="mr-6 w-[12rem]" classInactive="rounded-xl">
-    <AccordionItem open>
-      <span slot="header">Upcoming</span>
-      {#each tasks as { title, due, owner, students }}
-        {#if due != null && handleVisibilityTasks(owner, students)}
-          <span>due: {new Date(due).toLocaleDateString()}</span>
-          <span>{title}</span>
-        {/if}
-      {/each}
-    </AccordionItem>
-  </Accordion>
+  <div class="flex flex-col">
+    <Accordion class="mr-6 w-[12rem]" classInactive="rounded-xl">
+      <AccordionItem open>
+        <span slot="header">Upcoming</span>
+        {#each tasks as { title, due, owner, students }}
+          {#if due != null && handleVisibilityTasks(owner, students)}
+            <span>due: {new Date(due).toLocaleDateString()}</span>
+            <span>{title}</span>
+          {/if}
+        {/each}
+      </AccordionItem>
+    </Accordion>
+
+    {#if isAdminUser == true}
+      <div class="mt-[3rem]">
+        <Accordion class="mr-6 w-[12rem]" classInactive="rounded-xl">
+          <AccordionItem open>
+            <span slot="header">Class code</span>
+
+            <h1>{$page.params.codeCourse}</h1>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    {/if}
+  </div>
 
   <div class="w-[48rem] mr-64">
     <Accordion>

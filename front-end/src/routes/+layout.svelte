@@ -16,7 +16,6 @@
     SidebarWrapper,
   } from "flowbite-svelte";
   import {
-    UserSettingsSolid,
     HomeSolid,
     BarsSolid,
     CalendarMonthSolid,
@@ -41,18 +40,19 @@
   let userEmail: string;
 
   onMount(async () => {
-    if (User.getInstance().isLogginIn() == true) {
-      loggedIn = true;
+    const user = User.getInstance();
 
-      const user = User.getInstance();
+    loggedIn = await user.isLogginIn();
 
+    if (loggedIn) {
+      userName = await user.getUserName();
       userName = await user.getUserName();
       userEmail = await user.getUserEmail();
     }
   });
 
-  const signOut = () => {
-    User.getInstance().logOut();
+  const signOut = async () => {
+    await User.getInstance().logOut();
 
     window.location.href = "/";
   };

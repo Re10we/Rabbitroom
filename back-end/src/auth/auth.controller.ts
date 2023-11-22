@@ -10,7 +10,7 @@ import {
   Res,
   Req,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, response } from 'express';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/createUser.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -30,23 +30,26 @@ export class AuthController {
   async signInUser(
     @Body() dto: UserDto,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<string> {
+  ) {
     const { access_token, refresh_token } = await this.authService.signIn(dto);
 
-    response.cookie('refreshToken', refresh_token, {
-      secure: true, // Set to true if using HTTPS
-      httpOnly: true,
-      sameSite: 'strict', // Adjust to your requirements
-      maxAge: 15 * 24 * 60 * 60 * 1000, // Set the expiration time(15d)
-    });
-
-    return access_token;
+    response
+      .cookie('refreshToken', refresh_token, {
+        secure: true, // Set to true if using HTTPS
+        httpOnly: true,
+        sameSite: 'strict', // Adjust to your requirements
+        maxAge:
+          parseInt(process.env.JWT_REFRESH_TOKEN_EXPIRES) * 24 * 60 * 60 * 1000,
+      })
+      .cookie('accessToken', access_token, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge:
+          parseInt(process.env.JWT_ACCESS_TOKEN_EXPIRES) * 24 * 60 * 60 * 1000,
+      })
+      .sendStatus(200);
   }
-
-  @Get('refresh')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('bearerAuth')
-  refreshToken(@Req() req: Request) {}
 
   @Get('isStorageEmail/:email')
   validationEmail(@Param('email') email: string): Promise<boolean> {
@@ -56,6 +59,14 @@ export class AuthController {
   @Get('isStorageUserName/:name')
   validationUserName(@Param('name') name: string): Promise<boolean> {
     return this.authService.isStorageUserName(name);
+  }
+
+  @Get('logOut')
+  logOutUser(@Res() response: Response) {
+    response
+      .clearCookie('accessToken')
+      .clearCookie('refreshToken')
+      .sendStatus(200);
   }
 
   @Delete('delete')

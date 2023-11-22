@@ -4,6 +4,9 @@
     "concurrently": "^8.2.2"
   },
   "scripts": {
+    "server_i": "cd back-end && npm i",
+    "client_i": "cd front-end && npm i",
+    "npm i": "concurrently \"npm run server_i\" \"npm run client_i\"",
     "server": "cd back-end && npm run start:dev",
     "client": "cd front-end && npm run dev",
     "start": "concurrently \"npm run server\" \"npm run client\""

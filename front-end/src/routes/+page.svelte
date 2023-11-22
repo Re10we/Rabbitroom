@@ -13,11 +13,10 @@
   $: userCourses = [];
 
   onMount(async () => {
-    if (User.getInstance().isLogginIn() == true) {
-      loginingUser = true;
+    const user = User.getInstance();
 
-      const user = User.getInstance();
-
+    loginingUser = await user.isLogginIn();
+    if (loginingUser) {
       userName = await user.getUserName();
       userEmail = await user.getUserEmail();
       userCourses = await user.getUserCourses();
@@ -50,7 +49,7 @@
     <div class="relative h-[55rem]">
       <div class="absolute top-[50%] left-[50%] -ml-28 -mt-28">
         <Button><JoinCourse loggedInUser={loginingUser} /></Button>
-        <Button class="bg-transparent hover:bg-transparent text-black">
+        <Button class="bg-transparent hover:bg-transparent text-black focus:ring-0 ">
           <CreateCourse loggedInUser={loginingUser} />
         </Button>
       </div>
