@@ -25,6 +25,9 @@
   });
 </script>
 
+<svelte:head>
+  <title>Home</title>
+</svelte:head>
 <main>
   {#if loginingUser == true}
     {#if userCourses.length > 0}
@@ -32,9 +35,11 @@
         {#each userCourses as { nameCourse, codeCourse }}
           <Card href="/course/{codeCourse}" class="ml-12 w-[18rem] h-[16rem]" padding="none">
             <div
-              class="relative bg-[url('/yaiko_paravoz.png')] h-[7rem] rounded-t-md bg-no-repeat bg-center bg-cover"
+              class="relative bg-[url('/back_course_1.jfif')] h-[7rem] rounded-t-md bg-no-repeat bg-center bg-cover"
             >
-              <span class="absolute top-[5%] left-6 text-white text-5xl">{nameCourse}</span>
+              <span class="absolute top-[5%] left-2 text-white font-medium text-5xl"
+                >{nameCourse}</span
+              >
             </div>
           </Card>
         {/each}

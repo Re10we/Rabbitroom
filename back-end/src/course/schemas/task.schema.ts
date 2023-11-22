@@ -23,10 +23,10 @@ export class Task extends Document {
   topic: string;
 
   @Prop({
-    type: Array<{ _id: ObjectId; points: Number }>,
+    type: Array<{ name: String; points: Number }>,
     ref: User.name,
   })
-  students: [{ user: User; points: number }];
+  students: { name: User; points: number }[];
 
   @Prop({ type: [String] })
   files: [string];

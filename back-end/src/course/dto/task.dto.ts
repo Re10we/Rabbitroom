@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '../../user/schemas/user.schema';
 
 export class TaskDto {
   @ApiProperty({ type: 'string', required: true })
@@ -18,7 +17,7 @@ export class TaskDto {
   topic: string;
 
   @ApiProperty({ isArray: true, type: 'string', required: false })
-  students: [string];
+  students: string[];
 
   @ApiProperty({
     isArray: true,

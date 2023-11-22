@@ -54,7 +54,7 @@
   const signOut = () => {
     User.getInstance().logOut();
 
-    window.location.reload();
+    window.location.href = "/";
   };
 </script>
 
@@ -63,15 +63,14 @@
     <span
       class="w-7 h-7 hover:rounded-full hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-300"
     >
-      <BarsSolid on:click={() => (hiddenValue = !hiddenValue)} class="w-7 h-7 cursor-pointer" />
+      <BarsSolid
+        on:click={() => (hiddenValue = !hiddenValue)}
+        class="w-7 h-7 cursor-pointer outline-none mt-0.5"
+      />
     </span>
 
     <div class="flex ml-4">
-      <img
-        class="w-8 h-8"
-        src="https://www.gstatic.com/classroom/logo_square_rounded.svg"
-        alt="ImageGoogleClass"
-      />
+      <Avatar class="bg-transparent w-8 h-8" src="/rabbitroom_icon.png" rounded />
       <span class="text-2xl">RabbitRoom</span>
     </div>
   </div>
@@ -81,14 +80,14 @@
       <div class="flex mr-8">
         {#if $page.url.pathname == "/"}
           <div>
-            <CirclePlusOutline class="w-10 h-10 mr-4" />
+            <CirclePlusOutline class="w-10 h-10 mr-4 cursor-pointer outline-none" />
             <Dropdown>
               <DropdownItem><JoinCourse loggedInUser={loggedIn} /></DropdownItem>
               <DropdownItem><CreateCourse loggedInUser={loggedIn} /></DropdownItem>
             </Dropdown>
           </div>
         {/if}
-        <Avatar id="user-drop" class="w-22 h-10  cursor-pointer" src="/yaiko_paravoz.png" />
+        <Avatar id="user-drop" class="w-22 h-10  cursor-pointer" src="/avatar_0.jfif" />
         <Dropdown triggeredBy="#user-drop">
           <DropdownHeader>
             <span class="block text-sm">{userName}</span>
@@ -136,13 +135,6 @@
         <SidebarItem label="Arhive courses">
           <svelte:fragment slot="icon">
             <ArchiveSolid
-              class="w-5 h-5  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-            />
-          </svelte:fragment>
-        </SidebarItem>
-        <SidebarItem label="Settings">
-          <svelte:fragment slot="icon">
-            <UserSettingsSolid
               class="w-5 h-5  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
             />
           </svelte:fragment>

@@ -100,6 +100,23 @@ export class User {
     return false;
   }
 
+  async deleteTaskFromCourse(idTask: string, codeCourse: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.delete<boolean>(
+        `http://localhost:3000/course/deleteTask/${codeCourse}/${idTask}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessTokken()}`,
+          },
+        }
+      );
+
+      return response.data;
+    }
+
+    return false;
+  }
+
   getAccessTokken(): string | null {
     return localStorage.getItem("access_token");
   }
@@ -178,5 +195,41 @@ export class User {
     }
 
     return [];
+  }
+
+  async isAdminUser(codeCourse: string, userName: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.get(
+        `http://localhost:3000/course/isAdminUser/${codeCourse}/${userName}`
+      );
+
+      return response.data;
+    }
+
+    return false;
+  }
+
+  async isTeacherUser(codeCourse: string, userName: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.get(
+        `http://localhost:3000/course/isTeacherUser/${codeCourse}/${userName}`
+      );
+
+      return response.data;
+    }
+
+    return false;
+  }
+
+  async isStudentUser(codeCourse: string, userName: string): Promise<boolean> {
+    if (this.isLogginIn() == true) {
+      const response = await axios.get(
+        `http://localhost:3000/course/isStudentUser/${codeCourse}/${userName}`
+      );
+
+      return response.data;
+    }
+
+    return false;
   }
 }

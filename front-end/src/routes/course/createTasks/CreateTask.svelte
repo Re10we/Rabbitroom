@@ -118,7 +118,9 @@
       formData.append("due", dueValue ?? "");
       formData.append("maxPoints", maxPointsValue ?? "");
       formData.append("topic", selectedTopic);
-      formData.append("users", selectedUsers as string[]);
+      selectedUsers.map((item) => {
+        formData.append("students", item);
+      });
       files.map((item) => {
         formData.append("files", item, item.name);
       });

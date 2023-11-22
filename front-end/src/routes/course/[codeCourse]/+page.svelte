@@ -5,6 +5,7 @@
   import Users from "../pagesCourse/Users.svelte";
   import ClassWork from "../pagesCourse/ClassWork.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   enum ButtonState {
     stream,
@@ -26,6 +27,10 @@
     localStorage.setItem("courseLastState", currentButtonState.toString());
   };
 </script>
+
+<svelte:head>
+  <title>Course</title>
+</svelte:head>
 
 {#if currentButtonState != null}
   <div class="mt-6 flex justify-center">

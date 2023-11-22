@@ -15,6 +15,7 @@ import { CourseService } from './course.service';
 import { AuthGuard } from '../user/guard/auth.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { TaskDto } from './dto/task.dto';
+import { roleUser } from './schemas/course.schema';
 
 @Controller('course')
 @ApiTags('course-controller')
@@ -93,6 +94,52 @@ export class CourseController {
   @Get('getCourseTopics/:codeCourse')
   getCourseTopicsByCode(@Param('codeCourse') codeCourse: string) {
     return this.courseService.getCourseTopicsByCode(codeCourse);
+  }
+
+  @Get('isAdminUser/:codeCourse/:userName')
+  isAdminUser(
+    @Param('codeCourse') codeCourse: string,
+    @Param('userName') userName: string,
+  ) {
+    return this.courseService.isSomeRoleUser(
+      codeCourse,
+      userName,
+      roleUser.admin,
+    );
+  }
+
+  @Get('isTeacherUser/:codeCourse/:userName')
+  isTeacherUser(
+    @Param('codeCourse') codeCourse: string,
+    @Param('userName') userName: string,
+  ) {
+    return this.courseService.isSomeRoleUser(
+      codeCourse,
+      userName,
+      roleUser.teacher,
+    );
+  }
+
+  @Get('isStudentUser/:codeCourse/:userName')
+  isStudentUser(
+    @Param('codeCourse') codeCourse: string,
+    @Param('userName') userName: string,
+  ) {
+    return this.courseService.isSomeRoleUser(
+      codeCourse,
+      userName,
+      roleUser.student,
+    );
+  }
+
+  @Delete('deleteTask/:codeCourse/:idTask')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('bearerAuth')
+  deleteTaskFromCourse(
+    @Param('codeCourse') codeCourse: string,
+    @Param('idTask') idTask: string,
+  ) {
+    return this.courseService.deleteTaskFromCourse(codeCourse, idTask);
   }
 
   @Delete('delete/:nameCourse')

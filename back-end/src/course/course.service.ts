@@ -87,6 +87,18 @@ export class CourseService {
     owner: string,
     taskDto: TaskDto,
   ): Promise<boolean> {
+    let students: { name: string; points: number }[] = [];
+
+    if (typeof taskDto.students == 'string') {
+      students.push({ name: taskDto.students, points: 0 });
+    } else {
+      if (taskDto.students != null && taskDto.students.length > 0) {
+        students = taskDto.students.map((item) => {
+          return { name: item, points: 0 };
+        });
+      }
+    }
+
     const task = await this.taskModel.create({
       owner: owner,
       due: taskDto.due,
@@ -94,7 +106,7 @@ export class CourseService {
       description: taskDto.description,
       maxPoints: taskDto.maxPoints,
       topic: taskDto.topic,
-      students: taskDto.students,
+      students: students,
       files: [],
       links: taskDto.links,
     });
@@ -306,6 +318,96 @@ export class CourseService {
     } else {
       return '';
     }
+  }
+
+  async isSomeRoleUser(
+    codeCourse: string,
+    userName: string,
+    role: roleUser,
+  ): Promise<boolean> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return false;
+    }
+
+    const user = await this.userModel.findOne({ name: userName });
+    if (user == null) {
+      return false;
+    }
+
+    const result = course.users.find(
+      (item) => item.user._id.toString() == user._id.toString(),
+    );
+    if (result == undefined) {
+      return false;
+    }
+
+    return result.role == role;
+  }
+
+  async deleteTaskFromCourse(
+    codeCourse: string,
+    idTask: string,
+  ): Promise<boolean> {
+    const course = await this.courseModel.findOne({ codeCourse: codeCourse });
+    if (course == null) {
+      return false;
+    }
+
+    const task = course.tasks.find((item) => item._id.toString() == idTask);
+    if (task == undefined) {
+      return false;
+    }
+
+    const dirFiles =
+      course.nameCourse +
+      ':' +
+      course.codeCourse +
+      '/' +
+      task.title +
+      ':' +
+      task._id +
+      '/';
+
+    await this.deleteFilesFromS3(dirFiles);
+
+    course.tasks = course.tasks.filter((item) => item != task) as [Task];
+
+    return (
+      (await course.updateOne({ tasks: course.tasks })) != null &&
+      (await this.taskModel.findOneAndRemove({ _id: task._id })) != null
+    );
+  }
+
+  async deleteFilesFromS3(dir: string) {
+    let AWS_S3_BUCKET = process.env.AWS_S3_BUCKET_NAME;
+    let s3 = new AWS.S3({
+      accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+      region: process.env.AWS_S3_BUCKET_REGION,
+    });
+
+    const listParams = {
+      Bucket: AWS_S3_BUCKET,
+      Prefix: dir,
+    };
+
+    const listedObjects = await s3.listObjectsV2(listParams).promise();
+
+    if (listedObjects.Contents.length === 0) return;
+
+    const deleteParams = {
+      Bucket: AWS_S3_BUCKET,
+      Delete: { Objects: [] },
+    };
+
+    listedObjects.Contents.forEach(({ Key }) => {
+      deleteParams.Delete.Objects.push({ Key });
+    });
+
+    await s3.deleteObjects(deleteParams).promise();
+
+    if (listedObjects.IsTruncated) await this.deleteFilesFromS3(dir);
   }
 
   async deleteByName(nameCourse: string): Promise<boolean> {
