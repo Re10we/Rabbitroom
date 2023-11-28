@@ -12,7 +12,7 @@ export class User {
       User.instance = new User();
       User.axiosInstance = axios.create({
         withCredentials: true,
-        baseURL: import.meta.env.BASE_URL,
+        baseURL: import.meta.env.SERVER_URL,
       });
     }
 
