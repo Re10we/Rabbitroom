@@ -18,6 +18,6 @@
 
     "server_prod": "cd back-end && npm run start:prod",
     "client_prod": "cd front-end && npm run preview",
-    "start_prod": "concurrently \"npm run server_prod\" \"npm run client_prod\"",
+    "start_prod": "concurrently \"npm run server_prod\" \"npm run client_prod\""
   }
 }
