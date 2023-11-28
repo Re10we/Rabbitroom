@@ -13,7 +13,7 @@ export class AuthUser {
     this.user = user;
     this.axiosInstance = axios.create({
       withCredentials: true,
-      baseURL: "http://localhost:3000",
+      //baseURL: "http://localhost:3000",
     });
   }
 
