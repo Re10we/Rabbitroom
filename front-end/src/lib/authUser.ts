@@ -1,5 +1,5 @@
 import axios, { Axios, type AxiosResponse } from "axios";
-require("dotenv").config();
+import { BASE_URL } from "$env/static/private";
 
 export type User = {
   name: string;
@@ -14,7 +14,7 @@ export class AuthUser {
     this.user = user;
     this.axiosInstance = axios.create({
       withCredentials: true,
-      baseURL: process.env.BASE_URL,
+      baseURL: BASE_URL,
     });
   }
 
