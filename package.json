@@ -9,6 +9,9 @@
     "install": "concurrently \"npm run server_i\" \"npm run client_i\"",
     "server": "cd back-end && npm run start:dev",
     "client": "cd front-end && npm run dev",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server_build": "cd back-end && npm run build",
+    "client_build": "cd front-end && npm run build",
+    "start_build": "concurrently \"npm run server_build\" \"npm run client_build\""
   }
 }
