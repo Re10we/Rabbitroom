@@ -7,11 +7,17 @@
     "server_i": "cd back-end && npm i",
     "client_i": "cd front-end && npm i",
     "install": "concurrently \"npm run server_i\" \"npm run client_i\"",
-    "server": "cd back-end && npm run start:prod",
+    
+    "server": "cd back-end && npm run start:dev",
     "client": "cd front-end && npm run dev",
     "start": "concurrently \"npm run server\" \"npm run client\"",
+
     "server_build": "cd back-end && npm run build",
     "client_build": "cd front-end && npm run build",
-    "start_build": "concurrently \"npm run server_build\" \"npm run client_build\""
+    "start_build": "concurrently \"npm run server_build\" \"npm run client_build\"",
+
+    "server_prod": "cd back-end && npm run start:prod",
+    "client_prod": "cd front-end && npm run preview",
+    "start_prod": "concurrently \"npm run server_prod\" \"npm run client_prod\"",
   }
 }
