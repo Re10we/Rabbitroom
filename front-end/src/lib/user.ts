@@ -1,5 +1,6 @@
 import axios, { Axios } from "axios";
 import type FormData from "form-data";
+import { env } from "$env/dynamic/private";
 
 export class User {
   private static instance: User;
@@ -12,7 +13,7 @@ export class User {
       User.instance = new User();
       User.axiosInstance = axios.create({
         withCredentials: true,
-        baseURL: process.env.BASE_URL,
+        baseURL: env.BASE_URL,
       });
     }
 

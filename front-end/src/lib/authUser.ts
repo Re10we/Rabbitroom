@@ -1,4 +1,5 @@
 import axios, { Axios, type AxiosResponse } from "axios";
+import { env } from "$env/dynamic/private";
 
 export type User = {
   name: string;
@@ -13,7 +14,7 @@ export class AuthUser {
     this.user = user;
     this.axiosInstance = axios.create({
       withCredentials: true,
-      baseURL: process.env.BASE_URL,
+      baseURL: env.BASE_URL,
     });
   }
 
