@@ -7,7 +7,7 @@
     "server_i": "cd back-end && npm i",
     "client_i": "cd front-end && npm i",
     "install": "concurrently \"npm run server_i\" \"npm run client_i\"",
-    "server": "cd back-end && npm run start:dev",
+    "server": "cd back-end && npm run start:prod",
     "client": "cd front-end && npm run dev",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server_build": "cd back-end && npm run build",
