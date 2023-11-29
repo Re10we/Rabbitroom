@@ -1,4 +1,5 @@
 import axios, { Axios, type AxiosResponse } from "axios";
+import { PUBLIC_SERVER_URL } from "$env/static/public";
 
 export type User = {
   name: string;
@@ -13,7 +14,7 @@ export class AuthUser {
     this.user = user;
     this.axiosInstance = axios.create({
       withCredentials: true,
-      baseURL: import.meta.env.SERVER_URL,
+      baseURL: PUBLIC_SERVER_URL,
     });
   }
 
