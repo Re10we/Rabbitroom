@@ -26,7 +26,7 @@ export class Course extends Document {
   @Prop({ type: Array<{ _id: ObjectId }>, ref: Task.name })
   tasks: [Task];
 
-  @Prop({ type: [String], unique: true })
+  @Prop({ type: [String] })
   topics: [string];
 }
 
